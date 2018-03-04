@@ -1,3 +1,5 @@
+'Authors: Jon Devera, Michael Fekadu
+
 Private Sub bt_convert_Click()
 
 '*************** VARIABLE DECLARATIONS ***********************
