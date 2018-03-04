@@ -18,7 +18,7 @@ The following JIRA Markup Language will be incorporated in the test step editor 
 - [ ] "Quotes"
 - [ ] Colors
 - [ ] VP Insertion / Conversion
-- [ ] Bar Delimiters for tables
+- [ ] Bar Delimiters for tables '|'
 - [ ] 2-way compatibility (user can paste a test case into the editor and make it human readable)
 
 If time is still allotted for the effort, we can also incorporate 'nice-to-have' features.
