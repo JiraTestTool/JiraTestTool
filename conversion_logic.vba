@@ -39,8 +39,10 @@ Private Sub bt_convert_Click()
             '--------------- GET RANGE VALUES
             rangeString = Cells(rowIndex, "A").MergeArea.Address
 
-            Do While Mid(rangeString, startIndex, 1) <> ":" 'while character in string != ':'
-                tempString = tempString + Mid(rangeString, startIndex, 1) 'insert start row chars
+            'while character in string != ':'
+            Do While Mid(rangeString, startIndex, 1) <> ":"
+                'insert start row chars
+                tempString = tempString + Mid(rangeString, startIndex, 1)
                 startIndex = startIndex + 1
             Loop
 
@@ -64,12 +66,23 @@ Private Sub bt_convert_Click()
                         copyString = "" 'empty copy string
 
                         For stringIndex = 1 To Len(Cells(cellIndex, "B").Value)
-                            If Mid(Cells(cellIndex, "B").Value, stringIndex, 1) = "[" Then
-                                copyString = copyString + "*" + Mid(Cells(cellIndex, "B").Value, stringIndex, 1) + " "
-                            ElseIf Mid(Cells(cellIndex, "B").Value, stringIndex, 1) = "]" Then
-                                copyString = copyString + " " + Mid(Cells(cellIndex, "B").Value, stringIndex, 1) + "*"
+                            If Mid(Cells(cellIndex, "B").Value, _
+                                  stringIndex, 1) = "[" Then
+                                copyString = copyString + "*" _
+                                          + Mid(Cells(cellIndex, "B").Value, _
+                                                stringIndex, 1) _
+                                          + " "
+                            ElseIf Mid(Cells(cellIndex, "B").Value, _
+                                        stringIndex, 1) = "]" Then
+                                copyString = copyString _
+                                          + " " _
+                                          + Mid(Cells(cellIndex, "B").Value, _
+                                                stringIndex, 1) _
+                                          + "*"
                             Else
-                                copyString = copyString + Mid(Cells(cellIndex, "B").Value, stringIndex, 1)
+                                copyString = copyString _
+                                          + Mid(Cells(cellIndex, "B").Value, _
+                                                stringIndex, 1)
                             End If
                         Next stringIndex
                         concString = concString + copyString + "\\"
@@ -81,12 +94,24 @@ Private Sub bt_convert_Click()
                         copyString = ""
 
                         For stringIndex = 1 To Len(Cells(cellIndex, "B").Value)
-                            If Mid(Cells(cellIndex, "B").Value, stringIndex, 1) = "[" Then
-                                copyString = copyString + "*" + Mid(Cells(cellIndex, "B").Value, stringIndex, 1) + " "
-                            ElseIf Mid(Cells(cellIndex, "B").Value, stringIndex, 1) = "]" Then
-                                copyString = copyString + " " + Mid(Cells(cellIndex, "B").Value, stringIndex, 1) + "*"
+                            If Mid(Cells(cellIndex, "B").Value, _
+                                          stringIndex, 1) = "[" Then
+                                copyString = copyString _
+                                          + "*" _
+                                          + Mid(Cells(cellIndex, "B").Value, _
+                                                stringIndex, 1) _
+                                          + " "
+                            ElseIf Mid(Cells(cellIndex, "B").Value, _
+                                        stringIndex, 1) = "]" Then
+                                copyString = copyString _
+                                          + " " _
+                                          + Mid(Cells(cellIndex, "B").Value, _
+                                                stringIndex, 1) _
+                                          + "*"
                             Else
-                                copyString = copyString + Mid(Cells(cellIndex, "B").Value, stringIndex, 1)
+                                copyString = copyString _
+                                          + Mid(Cells(cellIndex, "B").Value, _
+                                                stringIndex, 1)
                             End If
                         Next stringIndex
                         concString = concString + copyString
@@ -96,7 +121,8 @@ Private Sub bt_convert_Click()
                 End If
             Next cellIndex
 
-            Cells(startNum, "B").Value = concString 'set string to first row of step
+            'set string to first row of step
+            Cells(startNum, "B").Value = concString
 
             'merging results cell
             If Cells(startNum, "C").MergeCells Then 'cell C merged
@@ -105,7 +131,9 @@ Private Sub bt_convert_Click()
                 resultString = ""
                 For cellIndex = startNum To endNum
                     If Cells(cellIndex, "C").Value <> "" Then 'not empty
-                        resultString = resultString + Cells(cellIndex, "C").Value + "\\"
+                        resultString = resultString _
+                                    + Cells(cellIndex, "C").Value _
+                                    + "\\"
                     Else
 
                     End If
@@ -141,11 +169,22 @@ Private Sub bt_convert_Click()
             copyString = ""
             For stringIndex = 1 To Len(Cells(startNum, "B").Value)
                 If Mid(Cells(startNum, "B").Value, stringIndex, 1) = "[" Then
-                    copyString = copyString + "*" + Mid(Cells(startNum, "B").Value, stringIndex, 1) + " "
-                ElseIf Mid(Cells(startNum, "B").Value, stringIndex, 1) = "]" Then
-                    copyString = copyString + " " + Mid(Cells(startNum, "B").Value, stringIndex, 1) + "*"
+                    copyString = copyString _
+                              + "*" _
+                              + Mid(Cells(startNum, "B").Value, _
+                                    stringIndex, 1) _
+                              + " "
+                ElseIf Mid(Cells(startNum, "B").Value, _
+                          stringIndex, 1) = "]" Then
+                    copyString = copyString _
+                              + " " _
+                              + Mid(Cells(startNum, "B").Value, _
+                                    stringIndex, 1) _
+                              + "*"
                 Else
-                    copyString = copyString + Mid(Cells(startNum, "B").Value, stringIndex, 1)
+                    copyString = copyString _
+                              + Mid(Cells(startNum, "B").Value, _
+                                    stringIndex, 1)
                 End If
             Next stringIndex
 
@@ -182,11 +221,21 @@ Private Sub bt_convert_Click()
         copyString = ""
         For stringIndex = 1 To Len(Cells(iRow, "F").Value)
             If Mid(Cells(iRow, "F").Value, stringIndex, 1) = "[" Then
-                copyString = copyString + "*" + Mid(Cells(iRow, "F").Value, stringIndex, 1) + " "
+                copyString = copyString _
+                          + "*" _
+                          + Mid(Cells(iRow, "F").Value, _
+                                stringIndex, 1) _
+                          + " "
             ElseIf Mid(Cells(iRow, "F").Value, stringIndex, 1) = "]" Then
-                copyString = copyString + " " + Mid(Cells(iRow, "F").Value, stringIndex, 1) + "*"
+                copyString = copyString _
+                          + " " _
+                          + Mid(Cells(iRow, "F").Value, _
+                                stringIndex, 1) _
+                          + "*"
             Else
-                copyString = copyString + Mid(Cells(iRow, "F").Value, stringIndex, 1)
+                copyString = copyString _
+                          + Mid(Cells(iRow, "F").Value, _
+                                stringIndex, 1)
             End If
         Next stringIndex
         Cells(iRow, "F").Value = copyString
