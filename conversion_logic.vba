@@ -62,12 +62,16 @@ Private Sub bt_convert_Click()
             '---------------- CONCATENANTE CELLS
             For cellIndex = startNum To endNum
                 If cellIndex <> endNum Then 'cellIndex != endNum
+                ' B is the description section for now'
                     If Cells(cellIndex, "B").Value <> "" Then 'not empty
                         copyString = "" 'empty copy string
 
+                        ' if you see the [ 
+                        ' then surround the [] with ** to get bold
                         For stringIndex = 1 To Len(Cells(cellIndex, "B").Value)
                             If Mid(Cells(cellIndex, "B").Value, _
                                   stringIndex, 1) = "[" Then
+                                  ' ADD THE "BOLD" JIRA MARKUP'
                                 copyString = copyString + "*" _
                                           + Mid(Cells(cellIndex, "B").Value, _
                                                 stringIndex, 1) _
@@ -212,11 +216,14 @@ Private Sub bt_convert_Click()
     Columns("G").ColumnWidth = 5
 
 
+    ' iCount is the row that has the last step
+
     Do While Cells(iRow, iCol).Value <> ""
         iCount = iCount + 1
         iRow = iRow + 1
     Loop
 
+    ' same logic as the bracket bold markup stuff above
     For iRow = 1 To iCount
         copyString = ""
         For stringIndex = 1 To Len(Cells(iRow, "F").Value)
@@ -241,6 +248,7 @@ Private Sub bt_convert_Click()
         Cells(iRow, "F").Value = copyString
     Next iRow
 
+    ' put the bar delimiters '
     For iCol = 1 To 9 Step 2
         For iRow = 1 To iCount
             Cells(iRow, iCol).Value = "|"
@@ -252,6 +260,7 @@ Private Sub bt_convert_Click()
     Columns("A:I").Font.Size = 10
     Columns("A:I").Font.Bold = True
 
+    ' bold the header row'
     For iCol = 1 To 9 Step 2
         For iRow = 1 To iCount
             Cells(iRow, iCol).Font.Bold = True
