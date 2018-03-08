@@ -66,7 +66,7 @@ Private Sub bt_convert_Click()
                     If Cells(cellIndex, "B").Value <> "" Then 'not empty
                         copyString = "" 'empty copy string
 
-                        ' if you see the [ 
+                        ' if you see the [
                         ' then surround the [] with ** to get bold
                         For stringIndex = 1 To Len(Cells(cellIndex, "B").Value)
                             If Mid(Cells(cellIndex, "B").Value, _
@@ -258,7 +258,7 @@ Private Sub bt_convert_Click()
     Columns("A:I").VerticalAlignment = xlTop
     Columns("A:I").Font.Name = "Times New Roman"
     Columns("A:I").Font.Size = 10
-    Columns("A:I").Font.Bold = True
+    Columns("A:I").Font.Bold = FALSE
 
     ' bold the header row'
     For iCol = 1 To 9 Step 2
