@@ -32,6 +32,15 @@ End Sub
 ' helper function for bt_convert_Click
 '
 Private Sub helperFunc(rowIndex, vbNullString)
+'++++++++++ RANGE FUNCTION VARIABLES
+  Dim rangeString As String   'string to store range
+  Dim startIndex As Integer   'starting row
+  Dim endIndex As Integer     'ending row
+  Dim tempString As String    'temp storage for values\
+  Dim startNum As Integer     'first row value
+  Dim endNum As Integer       'end row value
+  startIndex = 4  'start on first index of first character
+  tempString = "" 'empty string
   'while there is a valus in colummn
   Do While Cells(rowIndex, "A").Value <> vbNullString
       If Cells(rowIndex, "A").MergeCells Then 'if cells are merged
@@ -235,15 +244,6 @@ Private Sub bt_convert_Click()
   '*************** VARIABLE DECLARATIONS ***********************
     Dim rowIndex As Integer 'integer pointer for row
     rowIndex = 1 'start in row 1 column a
-  '++++++++++ RANGE FUNCTION VARIABLES
-    Dim rangeString As String   'string to store range
-    Dim startIndex As Integer   'starting row
-    Dim endIndex As Integer     'ending row
-    Dim tempString As String    'temp storage for values\
-    Dim startNum As Integer     'first row value
-    Dim endNum As Integer       'end row value
-    startIndex = 4  'start on first index of first character
-    tempString = "" 'empty string
   '++++++++++ CONCATENATE FUNCTION VARIABLES
     Dim concString As String 'variable to store all cell values
     Dim copyString As String 'hold string value
