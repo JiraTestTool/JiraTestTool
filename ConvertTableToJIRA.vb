@@ -22,12 +22,54 @@ Sub ConvertToJiraTable()
     rowIndex = 1
     'output = "||"
 
+    Dim foundBoldStart As Boolean
+    foundBoldStart = False
+    Dim stringToBold As String
+    stringToBold = ""
+    Dim currChar As String
+
     Application.ScreenUpdating = False
 
     Set workingRange = Range("A1").CurrentRegion
     For Each currRow In workingRange.Rows
         colIndex = 1
         For Each currCol In currRow.Columns
+
+            ' read each char in a range
+            For i = 1 To Len(Cells(rowIndex, colIndex).Value)
+                If Cells(rowIndex, colIndex).Characters(i, 1).Font.FontStyle = "Bold" Then
+                    currChar = Cells(rowIndex, colIndex).Characters(i, 1).Text
+                    If foundBoldStart = False Then
+                        foundBoldStart = True
+                    End If
+                    If foundBoldStart = True Then
+                        stringToBold = stringToBold & currChar
+                    End If
+                    'Debug.Print (stringToBold)
+                End If
+                'Debug.Print (currChar)
+            Next i
+            If stringToBold <> "" Then
+                Debug.Print ("*" & stringToBold & "*")
+                foundBoldStart = False ' reset to False until next bold
+                stringToBold = ""      ' reset to empty string until next bold
+            End If
+
+            'For i = 1 To Len(Range("A1").Value)
+            '  If Range("A1").Characters(i, 1).Font.FontStyle = "Bold" Then
+            '    If foundBoldStart = False Then
+            '        foundBoldStart = True
+            '    End If
+            '    If foundBoldStart = True Then
+            '        stringToBold = stringToBold & Range("A1").Characters(i, 1).Text
+            '    End If
+            '    Debug.Print (stringToBold)
+            '
+            '    'Debug.Print ("The " & Range("A1").Characters(i, 1).Text & " character is bold.")
+            '  End If
+            'Next i
+
+
             'replace empty value with space to generate the cell border
             cellVal = currCol.Value
             If (cellVal = "") Then cellVal = " "
@@ -62,5 +104,6 @@ Sub ConvertToJiraTable()
     Next currRow
     cb.SetText output
     cb.PutInClipboard
-    MsgBox "THE FOLLOWING HAS BEEN PUT INTO YOUR CLIPBOARD :" & vbCrLf & vbCrLf & output
+    MsgBox ("THE FOLLOWING HAS BEEN PUT INTO YOUR CLIPBOARD :" _
+            & vbCrLf & vbCrLf & output)
 End Sub
