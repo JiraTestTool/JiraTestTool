@@ -1,5 +1,4 @@
 ' from https://gist.github.com/DBremen/0ba67c6ec894ee581d98
-' author DBremen
 
 Sub ConvertToJiraTable()
     Dim workingRange As Range, currCol As Range, currRow As Range
