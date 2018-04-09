@@ -4,7 +4,7 @@ convert formatted JIRA test case steps to Excel and back to JIRA again.
 A project for Tapestry Solutions in SLO.
 
 Authors:
-Michael Fekadu, Jonathan Devera 
+Michael Fekadu, Jonathan Devera, Chris Toh 
 
 
 ### Task Description
@@ -12,7 +12,7 @@ Develop a Test Step Editor Tool
 
 The following JIRA Markup Language will be incorporated in the test step editor tool:
 
-- [ ] **Bold**
+- [x] **Bold**
 - [ ] *Italics*
 - [ ] __ Underline __
 - [ ] "Quotes"
