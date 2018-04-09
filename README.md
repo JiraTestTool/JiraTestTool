@@ -7,6 +7,14 @@ Authors:
 Michael Fekadu, Jonathan Devera, Chris Toh 
 
 
+
+### How To Use
+1. Open [ConvertTableToJIRAMarkup.xlsm](https://github.com/mfekadu/Excel2Jira/blob/master/ConvertTableToJIRAMarkup.xlsm)
+2. Click ```Sheet4```
+3. Click ```Developer >> Macros >> ConvertToJiraTable >> Run```
+4. **Notice the Message Box**
+5. Try ```CTRL+V``` in a JIRA comment box, then click preview
+
 ### Task Description
 Develop a Test Step Editor Tool
 
