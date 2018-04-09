@@ -17,9 +17,9 @@ Michael Fekadu, Jonathan Devera, Chris Toh
 
 
 ### Things To Know
-I have been writing the code in [ConvertTableToJIRA.vb](/ConvertTableToJIRA.vb) and copying the contents of that file into ```Module1``` of [ConvertTableToJIRAMarkup.xlsm](/ConvertTableToJIRAMarkup.xlsm)
-* you can find ```Module1``` by clicking ```Developer >> View Code >> Modules >> Module1```
-
+* I have been writing the code in [ConvertTableToJIRA.vb](/ConvertTableToJIRA.vb) and copying the contents of that file into ```Module1``` of [ConvertTableToJIRAMarkup.xlsm](/ConvertTableToJIRAMarkup.xlsm)
+  * you can find ```Module1``` by clicking ```Developer >> View Code >> Modules >> Module1```
+* Note that the program currently just puts formatted text into your clipboard. The design requirements want the formatted text to appear within a Spreadsheet. That step is a trivial for-loop of updating Cells once we have the properly formatted text stored in a variable. Also, Excel suffers from a noticable decrease in performance when updating Cells in a Spreadsheet, so it is best to save that step until the end. 
 
 ### Task Description
 Develop a Test Step Editor Tool
