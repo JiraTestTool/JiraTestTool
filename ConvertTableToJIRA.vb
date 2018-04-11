@@ -39,8 +39,11 @@ Sub ConvertToJiraTable()
     Application.ScreenUpdating = False
 
     Set workingRange = Range("A1").CurrentRegion
+
+
+
     For Each currRow In workingRange.Rows
-        colIndex = 1
+        'colIndex = 1
         For Each currCol In currRow.Columns
 
             cellStr = currCol.Value
@@ -77,7 +80,7 @@ Sub ConvertToJiraTable()
             Else
                 output = output & "|" & boldedCellStr
             End If
-            colIndex = colIndex + 1
+            'colIndex = colIndex + 1
         Next currCol
 
         rowIndex = rowIndex + 1
@@ -99,4 +102,13 @@ Sub ConvertToJiraTable()
     cb.PutInClipboard
     MsgBox ("THE FOLLOWING HAS BEEN PUT INTO YOUR CLIPBOARD :" _
             & vbCrLf & vbCrLf & output)
+
+
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets.Add(After:= _
+             ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+
+    Set TxtRng = ws.Range("A1")
+    TxtRng.Value = output
+
 End Sub
