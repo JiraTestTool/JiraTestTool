@@ -1,0 +1,13 @@
+Michael,
+Thanks for working on this on the weekend!  Some things to note:
+-	There should be a 1 to 1 relationship between the cells.  I noticed that step 2 as 13 cells associated to in the description.  Alt+Enter would create a new line within the cell if anyone was to edit a test step
+-	Although the clipboard is a great idea, I’d think it should still be incorporated in the excel sheet in case any minor fixes need to be done on the user’s end prior to committing it to JIRA
+-	With the plaintext approach, I’d like to see a before and after look on the test steps
+-	I think a button should be also added within the spreadsheet for when the user wants to convert the spreadsheet.
+
+As a reference for an example output, I’ve attached a sample test case I’ve created manually (GOLD-71443.xlsx)
+
+I took a look at your code and I think this can be simplified using the Replace function.  Take a look at the keyword_test.xlsm and let me know if this is what your intention is.
+
+Thanks,
+Jon
