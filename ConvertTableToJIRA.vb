@@ -108,7 +108,36 @@ Sub ConvertToJiraTable()
     Set ws = ThisWorkbook.Sheets.Add(After:= _
              ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
 
-    Set TxtRng = ws.Range("A1")
-    TxtRng.Value = output
+    Dim lines As Variant
+    simplifiedDelimiter = Replace(output, "||", "|")
+
+    ' using "|" + newline character as delimiter to grab each line
+    ' because the newline character might exist within a cell
+    lines = Split(simplifiedDelimiter, "|" & vbCrLf)
+
+    'Dim i As Integer
+    Dim j As Integer
+    i = 1
+    j = 1
+
+    Dim line As Variant
+    For Each line In lines:
+        ' each cell should be separated by "|"
+        cellArray = Split(line, "|")
+        j = 1
+        For Each c In cellArray:
+            ' Debug.Print ("put this thing into a Cell : " & c & vbCrLf)
+            Set TxtRng = ws.Cells(i, j)
+            TxtRng.Value = c
+            j = j + 1
+            Set TxtRng = ws.Cells(i, j)
+            TxtRng.Value = "|"
+            j = j + 1
+        Next c
+        i = i + 1
+    Next line
+
+    'Set TxtRng = ws.Range(i, j)
+    'TxtRng.Value = output
 
 End Sub
