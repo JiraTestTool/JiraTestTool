@@ -98,40 +98,51 @@ Sub ConvertToJiraTable()
         '====================================================='
 
     Next currRow
+
     cb.SetText output
     cb.PutInClipboard
     MsgBox ("THE FOLLOWING HAS BEEN PUT INTO YOUR CLIPBOARD :" _
             & vbCrLf & vbCrLf & output)
 
 
+    Call InsertOutputIntoNewSheet(output)
+
+End Sub
+
+
+Function InsertOutputIntoNewSheet(output)
+    ' i = row, j = column'
+    Dim i As Integer, j As Integer
+    ' lines = array of lines in `output`
+    ' cellArray = array of cells in `lines`
+    Dim lines As Variant, cellArray as Variant
+    ' c = cell
+    Dim line As Variant, c As Variant
+    Dim currCell As Range
     Dim ws As Worksheet
+
     Set ws = ThisWorkbook.Sheets.Add(After:= _
              ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
 
-    Dim lines As Variant
-    simplifiedDelimiter = Replace(output, "||", "|")
 
+    simplifiedDelimiter = Replace(output, "||", "|")
     ' using "|" + newline character as delimiter to grab each line
     ' because the newline character might exist within a cell
     lines = Split(simplifiedDelimiter, "|" & vbCrLf)
 
-    'Dim i As Integer
-    Dim j As Integer
     i = 1
     j = 1
 
-    Dim line As Variant
     For Each line In lines:
-        ' each cell should be separated by "|"
         cellArray = Split(line, "|")
-        j = 1
+        j = 1 ' reset column iterator to 1 to align rows
         For Each c In cellArray:
             ' Debug.Print ("put this thing into a Cell : " & c & vbCrLf)
-            Set TxtRng = ws.Cells(i, j)
-            TxtRng.Value = c
+            Set currCell = ws.Cells(i, j)
+            currCell.Value = c
             j = j + 1
-            Set TxtRng = ws.Cells(i, j)
-            TxtRng.Value = "|"
+            Set currCell = ws.Cells(i, j)
+            currCell.Value = "|"
             j = j + 1
         Next c
         i = i + 1
@@ -139,5 +150,4 @@ Sub ConvertToJiraTable()
 
     'Set TxtRng = ws.Range(i, j)
     'TxtRng.Value = output
-
-End Sub
+End Function
