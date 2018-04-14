@@ -10,13 +10,10 @@ End Function
 Sub ConvertToJiraTable()
     Dim workingRange As Range
 
-
     'Dim statusHash As Dictionary
     Dim cb As DataObject
     ' set up clipboard
     Set cb = New DataObject
-
-
 
     ' declare an array of strings for BOLD keywords
     Dim boldArray(20) As String
@@ -46,7 +43,6 @@ Sub ConvertToJiraTable()
     cb.PutInClipboard
     MsgBox ("THE FOLLOWING HAS BEEN PUT INTO YOUR CLIPBOARD :" _
             & vbCrLf & vbCrLf & output)
-
 
     Call InsertOutputIntoNewSheet(output)
 
@@ -102,35 +98,28 @@ Function ApplyMarkup(currRow, output, boldArray, undlnArray, italicsArray)
         cellWordsArr = Split(cellStr, " ")
 
         For i = LBound(cellWordsArr) To UBound(cellWordsArr)
-            ' Debug.Print (cellWordsArr(i))
-
             ' the empty string exists in cellWordsArr
             ' avoid empty string and match the keywords
             If cellWordsArr(i) <> "" _
                 And IsInArray(CStr(cellWordsArr(i)), boldArray) Then
                 cellWordsArr(i) = "*" & cellWordsArr(i) & "*"
             End If
-
-            ' Debug.Print (cellWordsArr(i))
         Next i
 
         boldedCellStr = Join(cellWordsArr)
 
         If (boldedCellStr = "") Then boldedCellStr = " "
         If rowIndex = 1 Then ' if it's the first row do the "||"
-            'MsgBox "rowIndex : " & rowIndex & vbCrLf & "colIndex : " & colIndex
             output = output & "||" & boldedCellStr
         Else
             output = output & "|" & boldedCellStr
         End If
-        'colIndex = colIndex + 1
     Next c
 
     '====================================================='
     '============fix the end of each row=================='
     '====================================================='
     If rowIndex = 1 Then ' if it's the first row do the "||"
-        'MsgBox "rowIndex : " & rowIndex & vbCrLf & "colIndex : " & colIndex
         output = output & " " & "||"
     Else
         output = output & " " & "|"
@@ -168,7 +157,6 @@ Function InsertOutputIntoNewSheet(output)
         cellArray = Split(line, "|")
         j = 1 ' reset column iterator to 1 to align rows
         For Each c In cellArray:
-            ' Debug.Print ("put this thing into a Cell : " & c & vbCrLf)
             Set currCell = ws.Cells(i, j)
             currCell.Value = c
             j = j + 1
@@ -178,7 +166,4 @@ Function InsertOutputIntoNewSheet(output)
         Next c
         i = i + 1
     Next line
-
-    'Set TxtRng = ws.Range(i, j)
-    'TxtRng.Value = output
 End Function
