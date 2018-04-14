@@ -73,6 +73,7 @@ Function AddJiraTableMarkup(workingRange, boldArray, undlnArray, italicsArray) A
 
     Next currRow
 
+    ' apparently this means `return output`
     AddJiraTableMarkup = output
 
 End Function
