@@ -30,6 +30,36 @@ Sub ConvertToJiraTable()
     boldArray(10) = "Drag"
     boldArray(11) = "Type"
 
+    Dim undlnArray(20) As String
+    undlnArray(0) = "Click"
+    undlnArray(1) = "Navigate"
+    undlnArray(2) = "Open"
+    undlnArray(3) = "Save"
+    undlnArray(4) = "Load"
+    undlnArray(5) = "Delete"
+    undlnArray(6) = "Hello"
+    undlnArray(7) = "Set"
+    undlnArray(8) = "Fill"
+    undlnArray(9) = "Enter"
+    undlnArray(10) = "Drag"
+    undlnArray(11) = "Type"
+    undlnArray(12) = "Asset"
+
+    Dim italicsArray(20) As String
+    italicsArray(0) = "Click"
+    italicsArray(1) = "Navigate"
+    italicsArray(2) = "Open"
+    italicsArray(3) = "Save"
+    italicsArray(4) = "Load"
+    italicsArray(5) = "Delete"
+    italicsArray(6) = "Hello"
+    italicsArray(7) = "Set"
+    italicsArray(8) = "Fill"
+    italicsArray(9) = "Enter"
+    italicsArray(10) = "Drag"
+    italicsArray(11) = "Type"
+    italicsArray(12) = "Asset"
+
     ' Make sure macro just works in the background
     Application.ScreenUpdating = False
 
@@ -79,8 +109,12 @@ End Function
 Function ApplyMarkup(currRow, output, boldArray, undlnArray, italicsArray)
 
     Dim c As Range ' each Cell
-    Dim boldedCellStr As String, cellStr As String
+    Dim strWithMarkup As String, cellStr As String, currWord As String
     Dim cellWordsArr As Variant
+
+    cellStr = ""
+    currWord = ""
+    strWithMarkup = ""
 
     ' for each cell in currRow
     For Each c In currRow.Columns
@@ -98,21 +132,41 @@ Function ApplyMarkup(currRow, output, boldArray, undlnArray, italicsArray)
         cellWordsArr = Split(cellStr, " ")
 
         For i = LBound(cellWordsArr) To UBound(cellWordsArr)
-            ' the empty string exists in cellWordsArr
+
+            ' check array contains `currWord` because `cellWordsArr(i)`
+            ' will be mutated after each check
+            currWord = CStr(cellWordsArr(i))
+
+            ' Apply Bold Markup
             ' avoid empty string and match the keywords
             If cellWordsArr(i) <> "" _
-                And IsInArray(CStr(cellWordsArr(i)), boldArray) Then
-                cellWordsArr(i) = "*" & cellWordsArr(i) & "*"
+                And IsInArray(currWord, boldArray) _
+                  Then
+                      cellWordsArr(i) = "*" & cellWordsArr(i) & "*"
+            End If
+
+            ' Apply Underline Markup
+            If cellWordsArr(i) <> "" _
+                And IsInArray(currWord, undlnArray) _
+                  Then
+                      cellWordsArr(i) = "+" & cellWordsArr(i) & "+"
+            End If
+
+            ' Apply Italics Markup
+            If cellWordsArr(i) <> "" _
+                And IsInArray(currWord, italicsArray) _
+                    Then
+                        cellWordsArr(i) = "_" & cellWordsArr(i) & "_"
             End If
         Next i
 
-        boldedCellStr = Join(cellWordsArr)
+        strWithMarkup = Join(cellWordsArr)
 
-        If (boldedCellStr = "") Then boldedCellStr = " "
+        If (strWithMarkup = "") Then strWithMarkup = " "
         If rowIndex = 1 Then ' if it's the first row do the "||"
-            output = output & "||" & boldedCellStr
+            output = output & "||" & strWithMarkup
         Else
-            output = output & "|" & boldedCellStr
+            output = output & "|" & strWithMarkup
         End If
     Next c
 
