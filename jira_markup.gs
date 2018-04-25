@@ -120,26 +120,16 @@ function jiraMarkup(input_sheet_name) {
             step = values[i][j];
             break;
           case 1:
-            desc = textFormatting(values[i][j], b_list, "*"); /* resolved by var declaration */ //I have no idea why this is making row 3 a billion times. If you do just desc = values[i][j]; it works as expected but with the new function it bricks itself
-
-            /* allow for multi-format words (i.e. *_+Create+_* ) */
-            /* pass in `desc` because it may have been formatted */
-            desc = textFormatting(desc, i_list, "_");
-            desc = textFormatting(desc, u_list, "+");
-
+            desc = textFormatting(values[i][j], b_list, i_list, u_list);
             /* the single-quote at the front tells Google Sheets to parse cell as plain-text rather than formula */
             desc = "'" + desc
             break;
           case 2:
-            expect = textFormatting(values[i][j], b_list, "*");
-            expect = textFormatting(expect, i_list, "_");
-            expect = textFormatting(expect, u_list, "+");
+            expect = textFormatting(values[i][j], b_list, i_list, u_list);
             expect = "'" + expect
             break;
           case 3:
-            notes = textFormatting(values[i][j], b_list, "*");
-            notes = textFormatting(notes, i_list, "_");
-            notes = textFormatting(notes, u_list, "+");
+            notes = textFormatting(values[i][j], b_list, i_list, u_list);
             notes = "'" + notes
             break;
           default:
@@ -192,34 +182,59 @@ function jiraMarkup(input_sheet_name) {
  * @param  format {String} the formatting character, either * for BOLD or _ for ITALICS or + for UNDERLINED.
  * @return        {String} "text" with "format" surrounding each keyword within "list".
  */
-function textFormatting(text, list, format){
+function textFormatting(text, b_list, i_list, u_list){
   var i;
-  for (i = 0; i < list.length; i++) {
-    //Use Regular Expression with boundaries to enforce exact replace and prevent splitting a word in the middle
-    /* https://regex101.com/
-     * /(?=\b)(?!\*)(?!\+)(?!\_)Create(?=\b)(?!\*)(?!\+)(?!\_)/g
-     * match only words without formatting already
-     * the 'g' makes this a "global" regex in order to match across the whole string.
-     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/global
-     */
-    text = text.replace(new RegExp("(?=\\b)(?!\\*)(?!\\+)(?!\\_)" + list[i] + "(?=\\b)(?!\\*)(?!\\+)(?!\\_)", 'g'), format + list[i] + format);
+  var splitArray = text.split(" ");
+
+//  Logger.log(splitArray);
+
+  for (i = 0; i < splitArray.length; i++){
+    var element = splitArray[i];
+    var element_without_star = element.replace(/\*\b|\b\*/g, "");       // *Create* -> Create ... *+Create+* -> +Create+ ... etc
+    var element_without_plus = element.replace(/\+\b|\b\+/g, "");       // +Create+ -> Create ... _+Create+_ -> _Create_ ... etc
+    var element_without_underscore = element.replace(/\_\b|\b\_/g, ""); // _Create_ -> Create ... *_Create_* -> *Create* ... etc
+
+    var element_without_star_plus = element.replace(/\*\+|\+\*/g, "");       // *+Create+* -> Create ... *+_Create_+* -> _Create_ ... etc
+    var element_without_plus_underscore = element.replace(/\+\_|\_\+/g, ""); // +_Create_+ -> Create ... _+*Create*+_ -> *Create* ... etc
+    var element_without_underscore_star = element.replace(/\_\*|\*\_/g, ""); // _*Create*_ -> Create ... *_+Create+_* -> +Create+ ... etc
+
+    /* if "Create" is in b_list, do BOLD */
+    if (b_list.indexOf(element) > -1 ||
+        b_list.indexOf(element_without_underscore) > -1 ||
+        b_list.indexOf(element_without_plus) > -1 ||
+        b_list.indexOf(element_without_plus_underscore) > -1) {
+
+          splitArray[i] = splitArray[i].replace(splitArray[i], "*" + splitArray[i] + "*");
+//          Logger.log(element);
+          Logger.log("......do BOLD \"*\"");
+
+    }
+    /* if "Create" is in i_list, do BOLD */
+    if (i_list.indexOf(splitArray[i]) > -1 ||
+        i_list.indexOf(element_without_star) > -1 ||
+        i_list.indexOf(element_without_plus) > -1 ||
+        i_list.indexOf(element_without_star_plus) > -1) {
+
+          splitArray[i] = splitArray[i].replace(splitArray[i], "_" + splitArray[i] + "_");
+//          Logger.log(element);
+          Logger.log("......do ITALICS \"_\"");
+    }
+    /* if "Create" is in u_list, do BOLD */
+    if (u_list.indexOf(splitArray[i]) > -1 ||
+        u_list.indexOf(element_without_underscore) > -1 ||
+        u_list.indexOf(element_without_star) > -1 ||
+        u_list.indexOf(element_without_underscore_star) > -1) {
+
+          splitArray[i] = splitArray[i].replace(splitArray[i], "+" + splitArray[i] + "+");
+//          Logger.log(element);
+          Logger.log("......do UNDERLINE \"+\"");
+    }
   }
-  return text;
+
+//  Logger.log(splitArray.join(" "));
+
+  return splitArray.join(" ");
 }
-//function textFormatting(text, list, format){
-//  var i;
-//  for (i = 0; i < list.length; i++) {
-//    //Use Regular Expression with boundaries to enforce exact replace and prevent splitting a word in the middle
-//    /* https://regex101.com/
-//     * /(?=\b)(?!\*)(?!\+)(?!\_)Create(?=\b)(?!\*)(?!\+)(?!\_)/g
-//     * match only words without formatting already
-//     * the 'g' makes this a "global" regex in order to match across the whole string.
-//     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/global
-//     */
-//    text = text.replace(new RegExp("(?=\\b)(?!\\" + format + ")" + list[i] + "(?=\\b)(?!\\" + format + ")", 'g'), format + list[i] + format);
-//  }
-//  return text;
-//}
 
 
 /**
