@@ -21,10 +21,59 @@ function onOpen() {
     {name: 'Generate JIRA Markup...', functionName: 'jiraMarkup'},
     {name: 'Copypasta Input from JIRA...', functionName: 'call_copypasta_with_input'},
     {name: 'Post-process brackets...', functionName: 'call_bold_brackets'},
-    {name: 'Reset Input sheet...', functionName: 'resetSheet'}
+    {name: 'Reset Input sheet...', functionName: 'resetSheet'},
+    {name: 'Prepare For Export to JIRA...', functionName: 'call_prepareForCopy_with_output_sheet'}
   ];
   spreadsheet.addMenu('JIRA Utilities', menuItems);
 }
+
+
+function call_prepareForCopy_with_output_sheet() {
+  try {
+    prepareForCopy("Output");
+  }
+  catch (e) {
+    /* TODO: catch specific error messages (consider switch-case-statement within catch-block) */
+    var message = "Uh oh... try again...";
+    Browser.msgBox(message);
+  }
+}
+
+
+
+function prepareForCopy(input_sheet_name) {
+  if (!input_sheet_name) {
+    input_sheet_name = "Output";
+  }
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var in_sheet = ss.getSheetByName(input_sheet_name);
+  var range = in_sheet.getDataRange();
+  var values = range.getValues();
+
+  var r;
+  var c;
+
+  for ( r = 0; r < range.getLastRow(); r++){
+    for ( c = 0 ; c < range.getLastColumn(); c++){
+      if (values[r][c][0] == " "
+          && values[r][c][1] == "\""
+          && values[r][c][values[r][c].length - 1] == " "
+          && values[r][c][values[r][c].length - 2] == "\"")
+      { // if first char of this cell is space and follwed by quote and ending is quote then space
+        values[r][c] = values[r][c].slice(2, values[r][c].length - 2);
+      }
+     values[r][c] = values[r][c].replace(/\s\s\s+"|"\s\s\s+/g, "");   // /"/g, "\"&CHAR(34)&\""); // remove the quotation mark
+
+      // I don't know how this works
+      // I don't know why this works
+      // But it works to make sure that the user can copy the Output into JIRA without quotation marks lingering
+      // resource: https://webapps.stackexchange.com/a/104802/185466
+      in_sheet.getRange(r+1,c+1).setFormula("=SUBSTITUTE(SUBSTITUTE(\""+ values[r][c] +"\",CHAR(13)&CHAR(10),CHAR(13)), CHAR(10), CHAR(13))");
+    };
+  };
+}
+
 
 function resetSheet(input_sheet_name) {
   if (!input_sheet_name) {
@@ -115,6 +164,11 @@ function jiraMarkup(input_sheet_name) {
 
     if (i != 0) {
       for (j = 0; j < columns; j++) {
+        /* replace all tabs with spaces
+         * helps prevent the quotation marks showing up after copying
+         */
+        values[i][j] = values[i][j].replace(/\t/g," ");;
+
         switch (j) {
           case 0:
             step = values[i][j];
@@ -122,15 +176,21 @@ function jiraMarkup(input_sheet_name) {
           case 1:
             desc = textFormatting(values[i][j], b_list, i_list, u_list);
             /* the single-quote at the front tells Google Sheets to parse cell as plain-text rather than formula */
-            desc = "'" + desc
+            desc = "'" + desc;
+            //var descWithQuotesEscaped = desc.replace(/"/g, "\"&CHAR(34)&\""); // escape the quotation mark
+            //desc = "=\"" + descWithQuotesEscaped + "\"";
             break;
           case 2:
             expect = textFormatting(values[i][j], b_list, i_list, u_list);
-            expect = "'" + expect
+            expect = "'" + expect;
+            //var expectWithQuotesEscaped = expect.replace(/"/g, "\"&CHAR(34)&\""); // escape the quotation mark
+            //expect = "=\"" + expectWithQuotesEscaped + "\"";
             break;
           case 3:
             notes = textFormatting(values[i][j], b_list, i_list, u_list);
-            notes = "'" + notes
+            notes = "'" + notes;
+            //var notesWithQuotesEscaped = notes.replace(/"/g, "\"&CHAR(34)&\""); // escape the quotation mark
+            //notes = "=\"" + notesWithQuotesEscaped + "\"";
             break;
           default:
             break;
@@ -173,6 +233,11 @@ function jiraMarkup(input_sheet_name) {
   cell.setWrap(true);
   cell = out_sheet.getRange("H1:H100");
   cell.setWrap(true);
+
+  /* call prepare for Copy function
+   * which will provide a clean sheet to copy into JIRA
+   */
+  prepareForCopy("Output");
 }
 
 /**
@@ -184,9 +249,9 @@ function jiraMarkup(input_sheet_name) {
  */
 function textFormatting(text, b_list, i_list, u_list){
   var i;
-  var splitArray = text.split(" ");
 
-//  Logger.log(splitArray);
+  var splitArray = text.split(" ");
+  Logger.log(splitArray);
 
   for (i = 0; i < splitArray.length; i++){
     var element = splitArray[i];
@@ -198,7 +263,7 @@ function textFormatting(text, b_list, i_list, u_list){
     var element_without_plus_underscore = element.replace(/\+\_|\_\+/g, ""); // +_Create_+ -> Create ... _+*Create*+_ -> *Create* ... etc
     var element_without_underscore_star = element.replace(/\_\*|\*\_/g, ""); // _*Create*_ -> Create ... *_+Create+_* -> +Create+ ... etc
 
-    /* if "Create" is in b_list, do BOLD */
+    /* if "Create" (splitArray[i]) is in b_list, do BOLD */
     if (b_list.indexOf(element) > -1 ||
         b_list.indexOf(element_without_underscore) > -1 ||
         b_list.indexOf(element_without_plus) > -1 ||
@@ -209,17 +274,8 @@ function textFormatting(text, b_list, i_list, u_list){
           Logger.log("......do BOLD \"*\"");
 
     }
-    /* if "Create" is in i_list, do BOLD */
-    if (i_list.indexOf(splitArray[i]) > -1 ||
-        i_list.indexOf(element_without_star) > -1 ||
-        i_list.indexOf(element_without_plus) > -1 ||
-        i_list.indexOf(element_without_star_plus) > -1) {
 
-          splitArray[i] = splitArray[i].replace(splitArray[i], "_" + splitArray[i] + "_");
-//          Logger.log(element);
-          Logger.log("......do ITALICS \"_\"");
-    }
-    /* if "Create" is in u_list, do BOLD */
+    /* if "Create" (splitArray[i]) is in u_list, do UNDERLINE */
     if (u_list.indexOf(splitArray[i]) > -1 ||
         u_list.indexOf(element_without_underscore) > -1 ||
         u_list.indexOf(element_without_star) > -1 ||
@@ -228,6 +284,17 @@ function textFormatting(text, b_list, i_list, u_list){
           splitArray[i] = splitArray[i].replace(splitArray[i], "+" + splitArray[i] + "+");
 //          Logger.log(element);
           Logger.log("......do UNDERLINE \"+\"");
+    }
+
+    /* if "Create" (splitArray[i]) is in i_list, do ITALICS */
+    if (i_list.indexOf(splitArray[i]) > -1 ||
+        i_list.indexOf(element_without_star) > -1 ||
+        i_list.indexOf(element_without_plus) > -1 ||
+        i_list.indexOf(element_without_star_plus) > -1) {
+
+          splitArray[i] = splitArray[i].replace(splitArray[i], "_" + splitArray[i] + "_");
+//          Logger.log(element);
+          Logger.log("......do ITALICS \"_\"");
     }
   }
 
