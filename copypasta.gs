@@ -16,15 +16,8 @@ function copypasta(input_sheet_name) {
   var first_cell = values[0][0];
 
   if (first_cell == "") {
-    /* https://stackoverflow.com/a/12813364/5411712
-     * "You need to double-escape "\n" for historical reasons" - Corey G
-     */
-    var newline = "\\n";
-    /* carriage return + line feed characters ... for a newline within a cell */
-    var crlf = String.fromCharCode(10) + String.fromCharCode(13);
     var message = "Please paste JIRA data into the cell \"A1\" of sheet ";
-    message += "\"" + input_sheet_name + "\" then run this function again." + newline + newline + crlf;
-    message += "to see an example input for " + "\"" + input_sheet_name + "\" ... please see the sheet \"Example Input for Copypasta\"" + newline + crlf;
+    message += "\"" + input_sheet_name + "\" then run this function again.";
     Browser.msgBox(message);
     in_sheet.clear();
 
