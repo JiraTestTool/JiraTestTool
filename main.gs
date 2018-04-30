@@ -12,10 +12,22 @@ function onInstall() {
 function onOpen() {
   var spreadsheet = SpreadsheetApp.getActive();
   var menuItems = [
-    {name: 'Generate JIRA Markup...', functionName: 'call_jiraMarkup_with_input'},
-    {name: 'Import JIRA Markup from Input cell "A1"...', functionName: 'call_copypasta_with_input'},
-    {name: 'Post-process brackets...', functionName: 'call_bold_brackets_with_output'},
-    {name: 'Reset Input sheet...', functionName: 'call_resetSheet_with_input'},
+    {
+      name: 'Generate JIRA Markup...',
+      functionName: 'call_jiraMarkup_with_input'
+    },
+    {
+      name: 'Import JIRA Markup from Input cell "A1"...',
+      functionName: 'call_copypasta_with_input'
+    },
+    {
+      name: 'Post-process brackets...',
+      functionName: 'call_bold_brackets_with_output'
+    },
+    {
+      name: 'Reset Input sheet...',
+      functionName: 'call_resetSheet_with_input'
+    },
   ];
   spreadsheet.addMenu('JIRA TOOLS', menuItems);
 }
@@ -26,7 +38,9 @@ function call_jiraMarkup_with_input() {
     jiraMarkup("Input");
   }
   catch (e) {
-    /* TODO: catch specific error messages (consider switch-case-statement within catch-block) */
+    Logger.log(e);
+    /* TODO: catch specific error messages
+     * (consider switch-case-statement within catch-block) */
     var message = "Hmm... something is wrong with the 'Input' sheet... please fix the input and try again";
     Browser.msgBox(message);
   };
@@ -37,7 +51,9 @@ function call_resetSheet_with_input() {
     resetSheet("Input");
   }
   catch (e) {
-    /* TODO: catch specific error messages (consider switch-case-statement within catch-block) */
+    Logger.log(e);
+    /* TODO: catch specific error messages
+     * (consider switch-case-statement within catch-block) */
     var message = "Uh oh... try again...";
     Browser.msgBox(message);
   };
@@ -48,9 +64,15 @@ function call_copypasta_with_input() {
     copypasta("Input");
   }
   catch (e) {
-    /* TODO: catch specific error messages (consider switch-case-statement within catch-block) */
-    var message = "Oops... make sure cell 'A1' on the 'Input' sheet has JIRA markup data and try again...";
-    Browser.msgBox(message);
+    Logger.log(e);
+    try { copypasta("Input"); } // try again
+    catch (e) {
+      Logger.log(e);
+      /* TODO: catch specific error messages
+       * (consider switch-case-statement within catch-block) */
+      var message = "Oops... make sure cell 'A1' on the 'Input' sheet has JIRA markup data and try again...";
+      Browser.msgBox(message);
+    };
   };
 };
 
@@ -59,7 +81,9 @@ function call_bold_brackets_with_output() {
     boldBrackets("Output");
   }
   catch (e) {
-    /* TODO: catch specific error messages (consider switch-case-statement within catch-block) */
+    Logger.log(e);
+    /* TODO: catch specific error messages
+     * (consider switch-case-statement within catch-block) */
     var message = "Uh oh... try again...";
     Browser.msgBox(message);
   };
