@@ -13,7 +13,7 @@ function onOpen() {
   var spreadsheet = SpreadsheetApp.getActive();
   var menuItems = [
     {name: 'Generate JIRA Markup...', functionName: 'call_jiraMarkup_with_input'},
-    {name: 'Read JIRA Markup from Input cell "A1"...', functionName: 'call_copypasta_with_input'},
+    {name: 'Import JIRA Markup from Input cell "A1"...', functionName: 'call_copypasta_with_input'},
     {name: 'Post-process brackets...', functionName: 'call_bold_brackets_with_output'},
     {name: 'Reset Input sheet...', functionName: 'call_resetSheet_with_input'},
   ];
