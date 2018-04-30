@@ -33,6 +33,30 @@ function prepareForCopy(input_sheet_name) {
 
 
 
+function sheetFormatting(sheet) {
+  sheet.getRange("D1:D100").setWrap(true); //Word Wrap Description
+  sheet.getRange("B1:B100").setWrap(true);
+  sheet.getRange("F1:F100").setWrap(true);
+  sheet.getRange("H1:H100").setWrap(true);
+
+  /* Finally resize the delimiter columns to a width of 20 pixels */
+  sheet.setColumnWidth(1, 20); // 1 refers to the first column
+  sheet.setColumnWidth(3, 20); // then further delimiters are on odd columns
+  sheet.setColumnWidth(5, 20);
+  sheet.setColumnWidth(7, 20);
+  sheet.setColumnWidth(9, 20);
+
+  /* set standard widths for non-delimeter columns
+   * these are reasonable widths for viewing while page Zoom = 100%
+   */
+  sheet.setColumnWidth(2, 100); // 100 pixels for *Step Name* column
+  sheet.setColumnWidth(4, 300); // 300 pixels for *Description* column
+  sheet.setColumnWidth(6, 200); // 200 pixels for *Expected Results* column
+  sheet.setColumnWidth(8, 150); // 150 pixels for *Notes* column
+}
+
+
+
 /**
  * Helper for jiraMarkup().
  * @param  text   {String} the plain-text of the current cell.
@@ -93,7 +117,9 @@ function textFormatting(text, b_list, i_list, u_list){
 
 //  Logger.log(splitArray.join(" "));
 
-  return splitArray.join(" ");
+  /* the single-quote at the front tells Google Sheets to
+   * parse cell as plain-text rather than formula */
+  return "'" + splitArray.join(" ");
 }
 
 
