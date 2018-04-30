@@ -6,6 +6,7 @@ function jiraMarkup(input_sheet_name) {
   if (!input_sheet_name) {
     input_sheet_name = "Input";
   }
+
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
   var values = in_sheet.getDataRange().getValues();
@@ -24,7 +25,11 @@ function jiraMarkup(input_sheet_name) {
   var u_list = getKeywords(2); // 2 is the index of the column for UNDERLINE
 
   /* declare all local variables */
-  var i, j, step, desc, expect, notes;
+  var i;
+  var step;
+  var desc;
+  var expect;
+  var notes;
 
   /* Clear old sheet */
   out_sheet.clear();
