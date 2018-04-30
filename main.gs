@@ -17,7 +17,7 @@ function onOpen() {
     {name: 'Post-process brackets...', functionName: 'call_bold_brackets_with_output'},
     {name: 'Reset Input sheet...', functionName: 'call_resetSheet_with_input'},
   ];
-  spreadsheet.addMenu('JIRA Utilities', menuItems);
+  spreadsheet.addMenu('JIRA TOOLS', menuItems);
 }
 
 
