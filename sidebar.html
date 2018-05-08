@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+    <style type="text/css">
+        body {
+            color: white;
+        }
+    </style>
+</head>
+
+<body bgcolor="#1E824C">
+    <center>
+        <!-- Header -->
+        <h1>JIRA TOOLS</h1>
+        <!-- Body -->
+        <div class="inline form-group" style="margin: 10px 0px 10px 0px;" align="left">
+
+            <!-- Do you want option 1 or 2? -->
+            <p style="text-align:center;"><b>Do you want option 1 or 2?</b></p>
+            <div style="text-align:center;width:100%;">
+                <label unselectable="on">
+                    <input type="radio" id="radioFull" name="translationType" value="full" /> 1
+                    <br>
+                </label>
+                <label unselectable="on">
+                    <input type="radio" id="radioSelected" name="translationType" value="selected" checked /> 2
+                    <br>
+                </label>
+            </div>
+
+            <!-- How about apples or bananas? -->
+            <p style="text-align:center;"><b>How about apples or bananas?</b></p>
+            <div style="text-align:center;width:100%;">
+                <label unselectable="on">
+                    <input type="radio" id="radioOgSheet" name="translationTarget" value="original" /> Apples
+                    <br>
+                </label>
+                <label unselectable="on">
+                    <input type="radio" id="radioNewSheet" name="translationTarget" value="new" checked /> Bananas
+                    <br>
+                </label>
+            </div>
+
+            <!-- Apply Quotes Tags -->
+            <div style="margin: 10px 0px 10px 0px;">
+                <button class="action" style="width:200px;height:40px" onclick="return google.script.run.applyQuoteTagAfterFirstLine();">
+                    Apply {quote} {quote} tags
+                </button>
+            </div>
+        </div>
+
+        <!-- Create JIRA Markup from Input -->
+        <div style="margin: 10px 0px 10px 0px;">
+            <button class="create" style="width:200px;height:40px" onclick="return google.script.run.call_jiraMarkup_with_input();">
+                Create JIRA Markup
+            </button>
+        </div>
+
+        <!-- Reset Input Sheet -->
+        <div style="margin: 10px 0px 10px 0px;">
+            <button class="share" style="width:200px;height:40px" onclick="return google.script.run.call_resetSheet_with_input();">
+                Reset Input Sheet
+            </button>
+        </div>
+    </center>
+</body>
+
+</html>

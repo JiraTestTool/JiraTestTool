@@ -17,19 +17,44 @@ function onOpen() {
       functionName: 'call_jiraMarkup_with_input'
     },
     {
-      name: 'Import JIRA Markup from Input cell "A1"...',
-      functionName: 'call_copypasta_with_input'
-    },
-    {
       name: 'Post-process brackets...',
       functionName: 'call_bold_brackets_with_output'
+    },
+    {
+      name: 'Apply Quote Tag after first line...',
+      functionName: 'applyQuoteTagAfterFirstLine'
+    },
+    {
+      name: 'Show Sidebar...',
+      functionName: 'showSidebar'
     },
     {
       name: 'Reset Input sheet...',
       functionName: 'call_resetSheet_with_input'
     },
+    {
+      name: 'Import JIRA Markup from Input cell "A1"...',
+      functionName: 'call_copypasta_with_input'
+    }
   ];
   spreadsheet.addMenu('JIRA TOOLS', menuItems);
+  showSidebar();
+}
+
+
+/**
+ *
+ * Sidebar title, content & size.
+ *
+ **/
+function showSidebar() {
+    var html = HtmlService.createHtmlOutputFromFile('sidebar')
+        .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+        .setTitle('JIRA TOOLS')
+        .setWidth(300);
+
+    // Open sidebar
+    SpreadsheetApp.getUi().showSidebar(html);
 }
 
 
