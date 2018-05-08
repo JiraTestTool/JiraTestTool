@@ -7,7 +7,7 @@
  */
 function copypasta(input_sheet_name) {
   if (!input_sheet_name) {
-    input_sheet_name = "Copypasta";
+    input_sheet_name = "Input";
   }
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
@@ -39,7 +39,17 @@ function copypasta(input_sheet_name) {
    * explained : /          \|\n                 |         \|\t\n                 |      \|\s+\n/
    *               ^pipe literal + newline^    ^or^    ^pipe + tab + newline^   ^or^    ^pipe + unlimited spaces + newline
    */
-  var rows = first_cell.split(/\|\n|\|\t\n|\|\s+\n/);
+  var first_row = first_cell.split(/\r\n/); // just grab the first line
+  var rows = first_cell.split(/\|\n|\|\t\n|\|\s+\n/g);
+
+  /* if there is a mismatch, then the || is missing and needs fixing */
+  if( first_row[0] != rows[0]) {
+    rows[0] = rows[0].split(/\r\n/);
+    rows.insert( 1, rows[0][1] );
+    rows[0] = rows[0][0];
+    rows[0] = rows[0] + "||";
+  }
+
   var cells = [];
   var i = 0;
   var longest_row_len = 0;

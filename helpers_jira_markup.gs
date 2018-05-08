@@ -16,10 +16,10 @@ function prepareForCopy(input_sheet_name) {
       if (
         values[r][c][0] == " "           // if first char of this cell is space
         && values[r][c][1] == "\""                     //  and follwed by quote
-        && values[r][c][values[r][c].length - 1] == " "  // and ending is quote
-        && values[r][c][values[r][c].length - 2] == "\"" //  and space
+        && values[r][c][values[r][c].length - 1] == " "  // and ending is space
+        && values[r][c][values[r][c].length - 2] == "\"" //  and quote
       ) {
-        values[r][c] = values[r][c].slice(2, values[r][c].length - 2);
+        values[r][c] = values[r][c].slice(2, values[r][c].length - 2); // slice away the quotes
       }
      values[r][c] = values[r][c].replace(/\s\s\s+"|"\s\s\s+/g, "");   // /"/g, "\"&CHAR(34)&\""); // remove the quotation mark
 

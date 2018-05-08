@@ -1,4 +1,3 @@
-
 /**
  * The actual function to format and apply markup
  */
