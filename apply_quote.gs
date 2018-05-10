@@ -1,3 +1,6 @@
+/**
+ *
+ */
 function applyQuoteTagAfterFirstLine() {
   var cell = SpreadsheetApp.getActiveSpreadsheet().getCurrentCell();
   var value = cell.getValue();

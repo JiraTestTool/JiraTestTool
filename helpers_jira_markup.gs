@@ -1,3 +1,6 @@
+/**
+ *
+ */
 function prepareForCopy(input_sheet_name) {
   if (!input_sheet_name) {
     input_sheet_name = "Output";
@@ -32,8 +35,9 @@ function prepareForCopy(input_sheet_name) {
   };
 }
 
-
-
+/**
+ * This function takes in a sheet object and applies standard cell formatting
+ */
 function sheetFormatting(sheet) {
   sheet.getRange("D1:D100").setWrap(true); //Word Wrap Description
   sheet.getRange("B1:B100").setWrap(true);

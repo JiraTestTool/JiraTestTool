@@ -1,3 +1,7 @@
+/**
+ * This function specifically reads the Output Sheet and postprocesses the brackets to be BOLD
+ * This is usually used for GOLD
+ */
 function boldBrackets(output_sheet_name) {
   if (!output_sheet_name) {
     output_sheet_name = "Output"; // Bold the brackets on the Output sheet

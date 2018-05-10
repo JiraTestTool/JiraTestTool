@@ -1,4 +1,4 @@
-/* read data from "Copypasta" sheet
+/**
  * prompt user to input JIRA data into "A1" if "A1" is empty
  * read data from "A1"
  * split values into a 2D array based on pipe delimiters ("||" and "|") and newlines
