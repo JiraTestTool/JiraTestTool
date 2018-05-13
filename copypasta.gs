@@ -39,12 +39,15 @@ function copypasta(input_sheet_name) {
    * explained : /          \|\n                 |         \|\t\n                 |      \|\s+\n/
    *               ^pipe literal + newline^    ^or^    ^pipe + tab + newline^   ^or^    ^pipe + unlimited spaces + newline
    */
-  var first_row = first_cell.split(/\r\n/); // just grab the first line
+  var first_row = first_cell.split(/\r\n|\n/); // just grab the first line
   var rows = first_cell.split(/\|\n|\|\t\n|\|\s+\n/g);
 
   /* if there is a mismatch, then the || is missing and needs fixing */
-  if( first_row[0] != rows[0]) {
-    rows[0] = rows[0].split(/\r\n/);
+  if (
+    (first_row[0] != rows[0])
+    && (first_row[0] != rows[0] + "|")
+  ) {
+    rows[0] = rows[0].split(/\r\n|\n/);
     rows.insert( 1, rows[0][1] );
     rows[0] = rows[0][0];
     rows[0] = rows[0] + "||";
@@ -98,12 +101,23 @@ function copypasta(input_sheet_name) {
    * this deletes the NULL first column
    */
   in_sheet.deleteColumn(1); // Columns start at "1" - this deletes the first column
-  /* then make sure to insert column a bug occurs
-   * where there are too few columns
-   * after calling copypasta too many times.
-   * columns are labeled A-Z. After deletion colmns A-Y exist.
-   */
-  in_sheet.insertColumnAfter(25); // 'Y' is the 25th letter of the alphabet.
+//  /* then make sure to insert column a bug occurs
+//   * where there are too few columns
+//   * after calling copypasta too many times.
+//   * columns are labeled A-Z. After deletion colmns A-Y exist.
+//   */
+//  in_sheet.insertColumnAfter(25); // 'Y' is the 25th letter of the alphabet.
+
+
+ /* this loop resets the columns to the default number of columns
+  * which is 26 columns labeled A-Z
+  */
+  var i = 0;
+  for(i = 0; i<26; i++) {
+    if (in_sheet.getMaxColumns() < 26) {
+      in_sheet.insertColumnAfter(in_sheet.getMaxColumns());
+    }
+  }
 
   /* now we should have a clean sheet
    * that looks similar to the "Input" sheet
