@@ -4,5 +4,5 @@
 	"short_name": "Jira Test Tool",
 	"version": "0.0.0.1",
 	"version_name": "0.1 Alpha",
-	"description": "quickly create or update JIRA tables for test case steps",
+	"description": "quickly create or update JIRA tables for test case steps"
 }
