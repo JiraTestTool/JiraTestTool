@@ -184,6 +184,12 @@ function copypasta(input_sheet_name) {
     }
   }
 
+  /* resonable sizes for editing */
+  in_sheet.autoResizeColumn(1);
+  in_sheet.setColumnWidth(2, 300);
+  in_sheet.setColumnWidth(3, 300);
+  in_sheet.setColumnWidth(4, 300);
+
   /* now we should have a clean sheet
    * that looks similar to the "Input" sheet
    * such that there are 4 columns
