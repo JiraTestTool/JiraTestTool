@@ -190,6 +190,12 @@ function copypasta(input_sheet_name) {
   in_sheet.setColumnWidth(3, 300);
   in_sheet.setColumnWidth(4, 300);
 
+  /* Word Wrap */
+  in_sheet.getRange("A1:A100").setWrap(true);
+  in_sheet.getRange("B1:B100").setWrap(true);
+  in_sheet.getRange("C1:C100").setWrap(true);
+  in_sheet.getRange("D1:D100").setWrap(true);
+
   /* now we should have a clean sheet
    * that looks similar to the "Input" sheet
    * such that there are 4 columns
