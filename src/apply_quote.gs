@@ -1,11 +1,10 @@
 /**
- *
+ * reads the currently selected cell and applied "{quote}" after the
+ * first newline character in the cell and before the end of the cell.
  */
 function applyQuoteTagAfterFirstLine() {
   var cell = SpreadsheetApp.getActiveSpreadsheet().getCurrentCell();
   var value = cell.getValue();
-
-//  Browser.msgBox(value);
 
   var splitArray = value.split("\n");
   splitArray.insert(1,"{quote}");

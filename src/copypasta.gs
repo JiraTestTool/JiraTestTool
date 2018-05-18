@@ -68,9 +68,6 @@ function copypasta(input_sheet_name) {
 
     for(x=0; x < cells[i].length - 1 ; x++) {
       if (cells[i][x][cells[i][x].length - 1] == "\\") {
-//        Logger.log(cells[i][x][cells[i][x].length - 3]);
-//        Logger.log("pop : " + cells[i][x]);
-
         cells[i][x] = cells[i][x] + cells[i][x+1];
         cells[i].remove(x+1);
       }
@@ -80,59 +77,6 @@ function copypasta(input_sheet_name) {
     longest_row_len = (longest_row_len > currLen) ? longest_row_len : currLen;
     i++;
   });
-
-  Logger.log(cells);
-
-
-//  var strArray = [];
-//  var cellsIndex = 0;
-//  var lastIndex = 0;
-//  var i = 0;
-//  var cells = [];
-//  var currRow = [];
-//
-//  rows.forEach(function each(row) {
-////    Logger.log("row = " + row);
-//   Logger.log(row.replace("||", "|").split("|"));
-//
-//    strArray = row.split("");
-////    Logger.log("strArray = " + strArray);
-//
-//    for(i=0; i<strArray.length; i++) {
-//      if (
-//        strArray[i-1]            // if prev is not null,
-//        && strArray[i] == "|"
-//        && strArray[i-1] != "\\" // due to short-circuiting i-1 never index at -1
-//      ) {
-//        currRow[cellsIndex++] = strArray.slice(lastIndex, i).join("");
-//        Logger.log(strArray.slice(lastIndex, i).join(""));
-//        i = lastIndex = (strArray[i+1] == "|") ? i + 2 : i + 1;
-//      }
-//    }
-//    cells.push(currRow);
-//    currRow = [];
-//  });
-//  Logger.log(cells);
-
-//  const regex = /\|\||\|/;
-//  var m;
-//
-//  rows.forEach(function each(row) {
-//    if ((m = regex.exec(row)) !== null) {
-//      // The result can be accessed through the `m`-variable.
-//      m.forEach(function (match, groupIndex) {
-//        Logger.log("Found match, " + groupIndex + " : " + match);
-//      });
-//    }
-//  });
-//
-//  // assuming you wanted mystring.split(/\|\||(?<!\|)\|/g, "baz"):
-//  mystring = mystring.split( /\|\||(?<!\|)\|/g,
-//    function ($0, $1) {
-//       Logger.log($0);
-//       Logger.log($1);
-//    }
-//  );
 
   /* make sure each row in "cells" has length = "longest_row_len"
    * because range.setValues requires the dimensions of "cells"
@@ -159,20 +103,11 @@ function copypasta(input_sheet_name) {
   var range = in_sheet.getRange(1,1,i, longest_row_len);
   range.setValues(cells);
 
-
-
   /* since JIRA tables are formatting with "|" or "||" a the start
    * the above code ends up leaving a NULL column
    * this deletes the NULL first column
    */
   in_sheet.deleteColumn(1); // Columns start at "1" - this deletes the first column
-//  /* then make sure to insert column a bug occurs
-//   * where there are too few columns
-//   * after calling copypasta too many times.
-//   * columns are labeled A-Z. After deletion colmns A-Y exist.
-//   */
-//  in_sheet.insertColumnAfter(25); // 'Y' is the 25th letter of the alphabet.
-
 
  /* this loop resets the columns to the default number of columns
   * which is 26 columns labeled A-Z
@@ -202,7 +137,6 @@ function copypasta(input_sheet_name) {
    *
    * "	Step Name	"	"	Description	"	"	Expected Results "	 Notes
    */
-
   jiraMarkup(input_sheet_name); // and now jiraMarkup can do it's job :D
 
   return true;
