@@ -5,7 +5,7 @@ JTT can
 * Generate JIRA table markup from a Google Spreadsheet
 * Import existing JIRA tables for easy editing within a spreadsheet
 
-Requires 3 sheets (Input/Output/Keywords) as in this [Google Sheet template][template]
+Requires 3 sheets (Input/Output/Keywords) as in [this Google Sheet template][template]
 
 A project for Tapestry Solutions in SLO.
 
