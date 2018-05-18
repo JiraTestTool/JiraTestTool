@@ -1,3 +1,8 @@
+/**
+ * This function specifically reads the Output Sheet
+ *   and postprocesses the brackets to be BOLD.
+ * This is usually used for GOLD
+ */
 function boldBrackets(output_sheet_name) {
   if (!output_sheet_name) {
     output_sheet_name = "Output"; // Bold the brackets on the Output sheet
@@ -22,21 +27,14 @@ function boldBrackets(output_sheet_name) {
        * this link was helpful for figuring out negative look behind
        */
 
-      //cell = cell.replace(new RegExp("[", 'g'), "*[");
-      //cell = cell.replace(new RegExp("]", 'g'), "]*");
-      cell = cell.replace(/((?!([ \*]))|^)\[[A-Za-z0-9\s]*\](?!\*)/g, "*$&*"); // do replace
+      /* do replace */
+      cell = cell.replace(/((?!([ \*]))|^)\[[A-Za-z0-9\s]*\](?!\*)/g, "*$&*");
+
+      /* set cell value to new string */
       out_sheet.getRange(j, i).setValue(cell);
       Logger.log(cell);
-//      if (cell.indexOf("[") > -1 && cell.indexOf("]") > -1) { // if cell contains "[" and "]"
-//        cell = cell.replace(/(?<!\*)\[[A-Za-z0-9]*\](?!\*)/, "*[");                       // do replace
-//        Logger.log(cell);
-//        range.getCell(i, j).setValue(cell);
-//      }
       i++;
     });
     j++;
   });
-
-  //Logger.log(values);
-  //range.setValues(values);
 }

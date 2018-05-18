@@ -1,3 +1,6 @@
+/**
+ * This function resets the Input Sheet and wipes to default
+ */
 function resetSheet(input_sheet_name) {
   if (!input_sheet_name) {
     input_sheet_name = "Input"; // Reset Input sheet...

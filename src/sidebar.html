@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+    <style type="text/css">
+        body {
+            color: white;
+        }
+        h1 {
+            color: white;
+        }
+        button {
+          font-size: 14px;
+        }
+        a {
+          font-size: 14px;
+          color: white;
+        }
+        a {
+          font-size: 14px;
+          color: white;
+        }
+    </style>
+</head>
+
+<body bgcolor="#1E824C">
+    <center>
+        <!-- Header -->
+        <h1>JIRA TOOLS</h1>
+        <!-- Body -->
+
+        <!-- Apply Quotes Tags -->
+        <div style="margin: 50px 0px 50px 0px;">
+            <button class="action" style="width:200px;height:40px" onclick="return google.script.run.applyQuoteTagAfterFirstLine();">
+                Apply {quote} {quote} tags
+            </button>
+        </div>
+
+        <!-- Generate JIRA Markup from Input -->
+        <div style="margin: 50px 0px 50px 0px;">
+            <button class="create" style="width:200px;height:40px" onclick="return google.script.run.call_jiraMarkup_with_input();">
+                Generate JIRA Markup
+            </button>
+        </div>
+
+        <!-- Post-process brackets -->
+        <div style="margin: 50px 0px 50px 0px;">
+            <button class="action" style="width:200px;height:40px" onclick="return google.script.run.call_bold_brackets_with_output();">
+                Post-process brackets
+            </button>
+        </div>
+
+        <!-- Import From Input Cell A1 -->
+        <div style="margin: 50px 0px 50px 0px;">
+            <button class="action" style="width:200px;height:40px" onclick="return google.script.run.call_copypasta_with_input();">
+                Import From Input Cell A1
+            </button>
+        </div>
+
+        <!-- Reset Input Sheet -->
+        <div style="margin: 50px 0px 50px 0px;">
+            <button style="width:200px;height:40px" onclick="return google.script.run.call_resetSheet_with_input();">
+                Reset Input Sheet
+            </button>
+        </div>
+
+        <!-- Text Formatting Notation Help -->
+        <div style="margin: 50px 0px 50px 0px;">
+            <b style="font-size: 20px;">Helpful Links</b>
+            <br>
+            <br>
+            <a href="https://jira/jira/secure/WikiRendererHelpAction.jspa?section=all" target="_blank">Text Formatting Notation Help</a>
+        </div>
+    </center>
+</body>
+</html>

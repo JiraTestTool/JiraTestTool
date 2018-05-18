@@ -1,5 +1,5 @@
 /**
- *
+ * A special function that is necessary for install as Add-On
  */
 function onInstall() {
   onOpen();
@@ -10,8 +10,21 @@ function onInstall() {
  * custom menu to the spreadsheet.
  */
 function onOpen() {
+  createStandaloneMenu();
+  createAddonMenu();
+  showSidebar();
+}
+
+/**
+ * Append a "JIRA TOOLS" menu into the top level of the menu bar
+ */
+function createStandaloneMenu() {
   var spreadsheet = SpreadsheetApp.getActive();
   var menuItems = [
+    {
+      name: 'Apply Quote Tag after first line...',
+      functionName: 'applyQuoteTagAfterFirstLine'
+    },
     {
       name: 'Generate JIRA Markup...',
       functionName: 'call_jiraMarkup_with_input'
@@ -21,24 +34,40 @@ function onOpen() {
       functionName: 'call_bold_brackets_with_output'
     },
     {
-      name: 'Apply Quote Tag after first line...',
-      functionName: 'applyQuoteTagAfterFirstLine'
-    },
-    {
-      name: 'Show Sidebar...',
-      functionName: 'showSidebar'
+      name: 'Import JIRA Markup from Input cell "A1"...',
+      functionName: 'call_copypasta_with_input'
     },
     {
       name: 'Reset Input sheet...',
       functionName: 'call_resetSheet_with_input'
     },
     {
-      name: 'Import JIRA Markup from Input cell "A1"...',
-      functionName: 'call_copypasta_with_input'
+      name: 'Show Sidebar...',
+      functionName: 'showSidebar'
     }
   ];
-  spreadsheet.addMenu('JIRA TOOLS', menuItems);
-  showSidebar();
+  spreadsheet.addMenu('JIRA TEST TOOL', menuItems);
+}
+
+/**
+ * Include "Jira Test Tool" in the "Add-ons" menu
+ */
+function createAddonMenu() {
+  SpreadsheetApp.getUi().createAddonMenu()
+    // Pre-Process
+    .addItem('Import JIRA Markup from Input cell "A1"...', 'call_copypasta_with_input')
+    .addItem('Apply Quote Tag after first line...', 'applyQuoteTagAfterFirstLine')
+    // Process
+    .addSeparator()
+    .addItem('Generate JIRA Markup...', 'call_jiraMarkup_with_input')
+    // Post-Process
+    .addSeparator()
+    .addItem('Post-process brackets...', 'call_bold_brackets_with_output')
+    // Set Up
+    .addSeparator()
+    .addItem('Reset Input sheet...', 'call_resetSheet_with_input')
+    .addItem('Show Sidebar...', 'showSidebar')
+    .addToUi();
 }
 
 
@@ -46,18 +75,20 @@ function onOpen() {
  *
  * Sidebar title, content & size.
  *
- **/
+ */
 function showSidebar() {
     var html = HtmlService.createHtmlOutputFromFile('sidebar')
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-        .setTitle('JIRA TOOLS')
+        .setTitle('JIRA TEST TOOL')
         .setWidth(300);
 
     // Open sidebar
     SpreadsheetApp.getUi().showSidebar(html);
 }
 
-
+/**
+ *
+ */
 function call_jiraMarkup_with_input() {
   try {
     jiraMarkup("Input");
@@ -71,6 +102,9 @@ function call_jiraMarkup_with_input() {
   };
 };
 
+/**
+ *
+ */
 function call_resetSheet_with_input() {
   try {
     resetSheet("Input");
@@ -84,6 +118,9 @@ function call_resetSheet_with_input() {
   };
 };
 
+/**
+ *
+ */
 function call_copypasta_with_input() {
   try {
     copypasta("Input");
@@ -101,6 +138,9 @@ function call_copypasta_with_input() {
   };
 };
 
+/**
+ *
+ */
 function call_bold_brackets_with_output() {
   try {
     boldBrackets("Output");

@@ -1,4 +1,4 @@
-/* read data from "Copypasta" sheet
+/**
  * prompt user to input JIRA data into "A1" if "A1" is empty
  * read data from "A1"
  * split values into a 2D array based on pipe delimiters ("||" and "|") and newlines
@@ -39,12 +39,15 @@ function copypasta(input_sheet_name) {
    * explained : /          \|\n                 |         \|\t\n                 |      \|\s+\n/
    *               ^pipe literal + newline^    ^or^    ^pipe + tab + newline^   ^or^    ^pipe + unlimited spaces + newline
    */
-  var first_row = first_cell.split(/\r\n/); // just grab the first line
+  var first_row = first_cell.split(/\r\n|\n/); // just grab the first line
   var rows = first_cell.split(/\|\n|\|\t\n|\|\s+\n/g);
 
   /* if there is a mismatch, then the || is missing and needs fixing */
-  if( first_row[0] != rows[0]) {
-    rows[0] = rows[0].split(/\r\n/);
+  if (
+    (first_row[0] != rows[0])
+    && (first_row[0] != rows[0] + "|")
+  ) {
+    rows[0] = rows[0].split(/\r\n|\n/);
     rows.insert( 1, rows[0][1] );
     rows[0] = rows[0][0];
     rows[0] = rows[0] + "||";
@@ -52,6 +55,7 @@ function copypasta(input_sheet_name) {
 
   var cells = [];
   var i = 0;
+  var x = 0;
   var longest_row_len = 0;
 
   /* loop over each row from input
@@ -59,11 +63,19 @@ function copypasta(input_sheet_name) {
    * "||" or "|"
    */
   rows.forEach(function each(row) {
-    cells[i] = row.split(/\|\||\|/);
+    const regex = /\|\||\|/;
+    cells[i] = row.split(regex);
+
+    for(x=0; x < cells[i].length - 1 ; x++) {
+      if (cells[i][x][cells[i][x].length - 1] == "\\") {
+        cells[i][x] = cells[i][x] + cells[i][x+1];
+        cells[i].remove(x+1);
+      }
+    }
+
     currLen = cells[i].length;
     longest_row_len = (longest_row_len > currLen) ? longest_row_len : currLen;
     i++;
-    Logger.log(row);
   });
 
   /* make sure each row in "cells" has length = "longest_row_len"
@@ -91,19 +103,34 @@ function copypasta(input_sheet_name) {
   var range = in_sheet.getRange(1,1,i, longest_row_len);
   range.setValues(cells);
 
-
-
   /* since JIRA tables are formatting with "|" or "||" a the start
    * the above code ends up leaving a NULL column
    * this deletes the NULL first column
    */
   in_sheet.deleteColumn(1); // Columns start at "1" - this deletes the first column
-  /* then make sure to insert column a bug occurs
-   * where there are too few columns
-   * after calling copypasta too many times.
-   * columns are labeled A-Z. After deletion colmns A-Y exist.
-   */
-  in_sheet.insertColumnAfter(25); // 'Y' is the 25th letter of the alphabet.
+
+ /* this loop resets the columns to the default number of columns
+  * which is 26 columns labeled A-Z
+  */
+  var i = 0;
+  for(i = 0; i<26; i++) {
+    if (in_sheet.getMaxColumns() < 26) {
+      in_sheet.insertColumnAfter(in_sheet.getMaxColumns());
+    }
+  }
+
+  /* resonable sizes for editing */
+  /* 125px for col 1 takes into account trailing spaces+tabs */
+  in_sheet.setColumnWidth(1, 125);
+  in_sheet.setColumnWidth(2, 300);
+  in_sheet.setColumnWidth(3, 300);
+  in_sheet.setColumnWidth(4, 300);
+
+  /* Word Wrap */
+  in_sheet.getRange("A1:A100").setWrap(true);
+  in_sheet.getRange("B1:B100").setWrap(true);
+  in_sheet.getRange("C1:C100").setWrap(true);
+  in_sheet.getRange("D1:D100").setWrap(true);
 
   /* now we should have a clean sheet
    * that looks similar to the "Input" sheet
@@ -111,7 +138,6 @@ function copypasta(input_sheet_name) {
    *
    * "	Step Name	"	"	Description	"	"	Expected Results "	 Notes
    */
-
   jiraMarkup(input_sheet_name); // and now jiraMarkup can do it's job :D
 
   return true;
