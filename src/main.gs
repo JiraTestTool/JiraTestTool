@@ -10,6 +10,15 @@ function onInstall() {
  * custom menu to the spreadsheet.
  */
 function onOpen() {
+  createStandaloneMenu();
+  createAddonMenu();
+  showSidebar();
+}
+
+/**
+ * Append a "JIRA TOOLS" menu into the top level of the menu bar
+ */
+function createStandaloneMenu() {
   var spreadsheet = SpreadsheetApp.getActive();
   var menuItems = [
     {
@@ -38,7 +47,27 @@ function onOpen() {
     }
   ];
   spreadsheet.addMenu('JIRA TOOLS', menuItems);
-  showSidebar();
+}
+
+/**
+ * Include "Jira Test Tool" in the "Add-ons" menu
+ */
+function createAddonMenu() {
+  SpreadsheetApp.getUi().createAddonMenu()
+    // Pre-Process
+    .addItem('Import JIRA Markup from Input cell "A1"...', 'call_copypasta_with_input')
+    .addItem('Apply Quote Tag after first line...', 'applyQuoteTagAfterFirstLine')
+    // Process
+    .addSeparator()
+    .addItem('Generate JIRA Markup...', 'call_jiraMarkup_with_input')
+    // Post-Process
+    .addSeparator()
+    .addItem('Post-process brackets...', 'call_bold_brackets_with_output')
+    // Set Up
+    .addSeparator()
+    .addItem('Reset Input sheet...', 'call_resetSheet_with_input')
+    .addItem('Show Sidebar...', 'showSidebar')
+    .addToUi();
 }
 
 
