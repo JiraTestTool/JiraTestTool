@@ -120,7 +120,8 @@ function copypasta(input_sheet_name) {
   }
 
   /* resonable sizes for editing */
-  in_sheet.autoResizeColumn(1);
+  /* 125px for col 1 takes into account trailing spaces+tabs */
+  in_sheet.setColumnWidth(1, 125);
   in_sheet.setColumnWidth(2, 300);
   in_sheet.setColumnWidth(3, 300);
   in_sheet.setColumnWidth(4, 300);

@@ -46,7 +46,7 @@ function createStandaloneMenu() {
       functionName: 'showSidebar'
     }
   ];
-  spreadsheet.addMenu('JIRA TOOLS', menuItems);
+  spreadsheet.addMenu('JIRA TEST TOOL', menuItems);
 }
 
 /**
@@ -79,7 +79,7 @@ function createAddonMenu() {
 function showSidebar() {
     var html = HtmlService.createHtmlOutputFromFile('sidebar')
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-        .setTitle('JIRA TOOLS')
+        .setTitle('JIRA TEST TOOL')
         .setWidth(300);
 
     // Open sidebar
