@@ -23,7 +23,7 @@ function createStandaloneMenu() {
   var menuItems = [
     {
       name: 'Apply Quote Tag after first line...',
-      functionName: 'applyQuoteTagAfterFirstLine'
+      functionName: 'call_applyQuoteTagAfterFirstLine'
     },
     {
       name: 'Generate JIRA Markup...',
@@ -95,9 +95,19 @@ function call_jiraMarkup_with_input() {
   }
   catch (e) {
     Logger.log(e);
-    /* TODO: catch specific error messages
-     * (consider switch-case-statement within catch-block) */
-    var message = "Hmm... something is wrong with the 'Input' sheet... please fix the input and try again";
+    var message = "";
+    switch (e.name) {
+      case "TypeError":
+        message = "Hmm... something is wrong with the 'Input' sheet... please fix the input and try again.\\n\\n";
+        message += "Try to write a more verbose test case.\\n";
+        message += "Consider \"Step 1\" rather than just \"1\"";
+        break;
+      default:
+        message = "Hmm... something is wrong with the 'Input' sheet... please fix the input and try again.";
+        break;
+    }
+    message += "\\n\\n>error message: \\n";
+    message += ">" + e.name + " - " + e.message;
     Browser.msgBox(message);
   };
 };
@@ -111,9 +121,9 @@ function call_resetSheet_with_input() {
   }
   catch (e) {
     Logger.log(e);
-    /* TODO: catch specific error messages
-     * (consider switch-case-statement within catch-block) */
     var message = "Uh oh... try again...";
+    message += "\\n\\n>error message: \\n";
+    message += ">" + e.name + " - " + e.message;
     Browser.msgBox(message);
   };
 };
@@ -130,9 +140,9 @@ function call_copypasta_with_input() {
     try { copypasta("Input"); } // try again
     catch (e) {
       Logger.log(e);
-      /* TODO: catch specific error messages
-       * (consider switch-case-statement within catch-block) */
       var message = "Oops... make sure cell 'A1' on the 'Input' sheet has JIRA markup data and try again...";
+      message += "\\n\\n>error message: \\n";
+      message += ">" + e.name + " - " + e.message;
       Browser.msgBox(message);
     };
   };
@@ -147,9 +157,26 @@ function call_bold_brackets_with_output() {
   }
   catch (e) {
     Logger.log(e);
-    /* TODO: catch specific error messages
-     * (consider switch-case-statement within catch-block) */
     var message = "Uh oh... try again...";
+    message += "\\n\\n>error message: \\n";
+    message += ">" + e.name + " - " + e.message;
+    Browser.msgBox(message);
+  };
+};
+
+
+/**
+ *
+ */
+function call_applyQuoteTagAfterFirstLine() {
+  try {
+    applyQuoteTagAfterFirstLine();
+  }
+  catch (e) {
+    Logger.log(e);
+    var message = "Uh oh... try again...";
+    message += "\\n\\n>error message: \\n";
+    message += ">" + e.name + " - " + e.message;
     Browser.msgBox(message);
   };
 };
