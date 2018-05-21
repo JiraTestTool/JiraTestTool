@@ -30,6 +30,8 @@ function jiraMarkup(input_sheet_name) {
   var expect;
   var notes;
 
+  var out_values = [];
+
   /* Clear old sheet */
   out_sheet.clear();
 
@@ -57,21 +59,36 @@ function jiraMarkup(input_sheet_name) {
         step = step.replace("vp", "VP");
         step = step.replace("vP", "VP");
         step = step.replace("Vp", "VP");
-        out_sheet.appendRow(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
+
+        out_values.push(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
       }
       else {
-        out_sheet.appendRow(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
+        out_values.push(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
       }
     }
     else {
-      out_sheet.appendRow(["||", "Step Name", "||", "Description", "||", "Expected Results", "||", "Notes", "||"]);
+      out_values.push(["||", "Step Name", "||", "Description", "||", "Expected Results", "||", "Notes", "||"]);
     }
   }
 
+  /* set range of "rows" rows and "9" columns
+   * with the values inside "out_values"
+   */
+  var range = out_sheet.getRange(1,1,rows, 9);
+  range.setValues(out_values);
+
   sheetFormatting(out_sheet);
 
-  /* call prepare for Copy function
+  /* call prepareForCopy function
    * which will provide a clean sheet to copy into JIRA
    */
   prepareForCopy("Output");
+
+  var result = checkForMistakes("Output");
+
+  if (result != []) {
+    Browser.msgBox("Mistakes Found",
+                   "Please manually verify the following cells: \\n" + result,
+                   Browser.Buttons.OK)
+  }
 }
