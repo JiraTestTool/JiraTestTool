@@ -22,8 +22,11 @@ function setupSheets() {
 
   /* create sheets */
   var in_sheet  = createAndPositionSheet(in_name, 1);
+  in_sheet.setTabColor("#00ffff");  // cyan
   var out_sheet = createAndPositionSheet(out_name, 2);
+  out_sheet.setTabColor("#00ff00"); // green
   var key_sheet = createAndPositionSheet(key_name, 3);
+  key_sheet.setTabColor("#ff00ff"); // magenta
 
   /* if createAndPositionSheet() made a brand new key_sheet
    * then the cell A1 will have the string key_name
