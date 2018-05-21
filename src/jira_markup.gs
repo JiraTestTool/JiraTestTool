@@ -86,7 +86,7 @@ function jiraMarkup(input_sheet_name) {
 
   var result = checkForMistakes("Output");
 
-  if (result != []) {
+  if (result.toString() != "") {
     Browser.msgBox("Mistakes Found",
                    "Please manually verify the following cells: \\n" + result,
                    Browser.Buttons.OK)
