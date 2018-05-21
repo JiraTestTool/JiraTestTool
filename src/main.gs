@@ -22,6 +22,10 @@ function createStandaloneMenu() {
   var spreadsheet = SpreadsheetApp.getActive();
   var menuItems = [
     {
+      name: 'Import JIRA Markup from Input cell "A1"...',
+      functionName: 'call_copypasta_with_input'
+    },
+    {
       name: 'Apply Quote Tag after first line...',
       functionName: 'call_applyQuoteTagAfterFirstLine'
     },
@@ -34,8 +38,8 @@ function createStandaloneMenu() {
       functionName: 'call_bold_brackets_with_output'
     },
     {
-      name: 'Import JIRA Markup from Input cell "A1"...',
-      functionName: 'call_copypasta_with_input'
+      name: 'Setup Input/Output/Keywords Sheets...',
+      functionName: 'call_setupSheets'
     },
     {
       name: 'Reset Input sheet...',
@@ -65,6 +69,7 @@ function createAddonMenu() {
     .addItem('Post-process brackets...', 'call_bold_brackets_with_output')
     // Set Up
     .addSeparator()
+    .addItem('Setup Input/Output/Keywords Sheets...', 'call_setupSheets')
     .addItem('Reset Input sheet...', 'call_resetSheet_with_input')
     .addItem('Show Sidebar...', 'showSidebar')
     .addToUi();
@@ -111,6 +116,24 @@ function call_jiraMarkup_with_input() {
     Browser.msgBox(message);
   };
 };
+
+
+/**
+ *
+ */
+function call_setupSheets() {
+  try {
+    setupSheets();
+  }
+  catch (e) {
+    Logger.log(e);
+    var message = "Sorry, JTT failed to setup the 'Input' 'Output' and 'Keywords' sheets.";
+    message += "\\n\\n>error message: \\n";
+    message += ">" + e.name + " - " + e.message;
+    Browser.msgBox(message);
+  };
+};
+
 
 /**
  *

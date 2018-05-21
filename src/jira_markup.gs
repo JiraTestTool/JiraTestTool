@@ -1,15 +1,19 @@
 /**
  * The actual function to format and apply markup
  */
-function jiraMarkup(input_sheet_name) {
+function jiraMarkup(input_sheet_name, output_sheet_name) {
   if (!input_sheet_name) {
     input_sheet_name = "Input";
+  }
+
+  if (!output_sheet_name) {
+    output_sheet_name = "Output";
   }
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
   var values = in_sheet.getDataRange().getValues();
-  var out_sheet = ss.getSheetByName("Output");
+  var out_sheet = ss.getSheetByName(output_sheet_name);
 
   var result = out_sheet.getDataRange().getValues();
   var columns = in_sheet.getLastColumn();
@@ -82,9 +86,9 @@ function jiraMarkup(input_sheet_name) {
   /* call prepareForCopy function
    * which will provide a clean sheet to copy into JIRA
    */
-  prepareForCopy("Output");
+  prepareForCopy(output_sheet_name);
 
-  var result = checkForMistakes("Output");
+  var result = checkForMistakes(output_sheet_name);
 
   if (result.toString() != "") {
     Browser.msgBox("Mistakes Found",
