@@ -9,8 +9,8 @@ Requires 3 sheets (Input/Output/Keywords) as in [this Google Sheet template][tem
 
 A project for Tapestry Solutions in SLO.
 
-Authors:
-Michael Fekadu, Jonathan Devera, Chris Toh
+Contributors:
+Michael Fekadu, Jonathan Devera, Chris Toh, Eric Cole
 
 
 
