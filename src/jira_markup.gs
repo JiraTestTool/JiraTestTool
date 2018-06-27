@@ -1,15 +1,19 @@
 /**
  * The actual function to format and apply markup
  */
-function jiraMarkup(input_sheet_name) {
+function jiraMarkup(input_sheet_name, output_sheet_name) {
   if (!input_sheet_name) {
     input_sheet_name = "Input";
+  }
+
+  if (!output_sheet_name) {
+    output_sheet_name = "Output";
   }
 
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
   var values = in_sheet.getDataRange().getValues();
-  var out_sheet = ss.getSheetByName("Output");
+  var out_sheet = ss.getSheetByName(output_sheet_name);
 
   var result = out_sheet.getDataRange().getValues();
   var columns = in_sheet.getLastColumn();
@@ -32,6 +36,8 @@ function jiraMarkup(input_sheet_name) {
   var pcnum = 0; /* EC: Defined the precondition number as "0" */
   var stnum = 0; /* EC: Defined the step number as "0" */
   var vpnum = 0; /* EC: Defined the VP number as "0" */
+
+  var out_values = [];
 
   /* Clear old sheet */
   out_sheet.clear();
@@ -76,7 +82,7 @@ function jiraMarkup(input_sheet_name) {
       ) {
         vpnum = vpnum + 1; /* EC: increased VP number by 1 */
         step = (step === "VP") ? step + " " + vpnum : step; /* EC: Test to see if `step` is equal to "VP". If it is, then replace it with VP # else just keep `step` as it is */
-        out_sheet.appendRow(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
+        out_values.push(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
       }
       else {
         step = step.replace(/pc/i, "Precondition");
@@ -86,18 +92,32 @@ function jiraMarkup(input_sheet_name) {
         if (step === "Precondition") pcnum = pcnum + 1; /* EC: If `step` is equal to "Precondition", increased Precondition number by 1 */
         step = (step === "Step") ? step + " " + stnum : step; /* EC: Test to see if `step` is equal to "Step". If it is, then replace it with Step # else just keep `step` as it is */
         step = (step === "Precondition") ? step + " " + pcnum : step; /* EC: Test to see if `step` is equal to "Precondition". If it is, then replace it with Precondition # else just keep `step` as it is */
-        out_sheet.appendRow(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
+        out_values.push(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
       }
     }
     else {
-      out_sheet.appendRow(["||", "Step Name", "||", "Description", "||", "Expected Results", "||", "Notes", "||"]);
+      out_values.push(["||", "Step Name", "||", "Description", "||", "Expected Results", "||", "Notes", "||"]);
     }
   }
 
+  /* set range of "rows" rows and "9" columns
+   * with the values inside "out_values"
+   */
+  var range = out_sheet.getRange(1,1,rows, 9);
+  range.setValues(out_values);
+
   sheetFormatting(out_sheet);
 
-  /* call prepare for Copy function
+  /* call prepareForCopy function
    * which will provide a clean sheet to copy into JIRA
    */
-  prepareForCopy("Output");
+  prepareForCopy(output_sheet_name);
+
+  var result = checkForMistakes(output_sheet_name);
+
+  if (result.toString() != "") {
+    Browser.msgBox("Mistakes Found",
+                   "Please manually verify the following cells: \\n" + result,
+                   Browser.Buttons.OK)
+  }
 }
