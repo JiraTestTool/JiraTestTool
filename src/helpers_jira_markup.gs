@@ -68,7 +68,8 @@ function prepareForCopy(input_sheet_name) {
       ) {
         values[r][c] = values[r][c].slice(2, values[r][c].length - 2); // slice away the quotes
       }
-     values[r][c] = values[r][c].replace(/\s\s\s+"|"\s\s\s+/g, "");   // /"/g, "\"&CHAR(34)&\""); // remove the quotation mark
+      values[r][c] = values[r][c].toString();  /* EC: read all values as strings to fix the issue when a number is only entered in a cell */
+      values[r][c] = values[r][c].replace(/\s\s\s+"|"\s\s\s+/g, "");   // /"/g, "\"&CHAR(34)&\""); // remove the quotation mark
 
       // I don't know how this works
       // I don't know why this works
