@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - added an option to setup the Input/Output/Keywords sheets from an empty spreadsheet
 - added a feature to allow for auto numbering of steps, preconditions, and VPs.
-- added a feature to allow for a double back-slash to be interpreted as a new line break since that is how JIRA reads it.
+- added a feature to allow for a double back-slash to be interpreted as a new line break since that is how JIRA reads it. (Eric Cole)
 - added this changelog
 
 ### Changed
@@ -18,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - improved runtime by reducing sheet updates
 
 ### Fixed
-- fixed the issue that generates an error when a quotation mark is in a cell.
-- fixed the issue that generates an error when a number only is used in a cell.
+- fixed the issue that generates an error when a quotation mark is in a cell. (Eric Cole)
+- fixed the issue that generates an error when a number only is used in a cell. (Eric Cole)
 
 ## [1.0.0] - 2018-05-18
 First version
