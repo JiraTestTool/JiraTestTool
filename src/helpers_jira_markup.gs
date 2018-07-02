@@ -1,4 +1,44 @@
 /**
+ * Helper for jiraMarkup() to be used after prepareForCopy().
+ *
+ * checkForMistakes() will loop over the data values in a sheet and build an
+ *   array of cells in A1 notation that contain the string "#ERROR!".
+ * @param  sheet_name {String} the sheet to run this function on.
+ * @return            {Array} array of cells in A1 notation that have an error.
+ */
+function checkForMistakes(sheet_name) {
+  if (!sheet_name) {
+    sheet_name = "Output";
+  }
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(sheet_name);
+//  var range = sheet.getDataRange();
+//  var values = range.getValues();
+  var lastRow = sheet.getDataRange().getLastRow();
+  var lastCol = sheet.getDataRange().getLastColumn();
+
+  var r;
+  var c;
+
+  var cell;
+
+  var mistakes = [];
+
+  for ( r = 0; r < lastRow; r++){
+    for ( c = 0 ; c < lastCol; c++){
+      cell = sheet.getRange(r+1, c+1);
+      if (cell.getValue() == "#ERROR!") {
+        mistakes.push(cell.getA1Notation());
+        Logger.log("the Cell \"" + cell.getA1Notation() + "\" needs attention.");
+      }
+    };
+  };
+  return mistakes;
+}
+
+
+/**
  *
  */
 function prepareForCopy(input_sheet_name) {
@@ -11,10 +51,14 @@ function prepareForCopy(input_sheet_name) {
   var range = in_sheet.getDataRange();
   var values = range.getValues();
 
+  var out_formulas = [];
+  var new_row = [];
+
   var r;
   var c;
 
   for ( r = 0; r < range.getLastRow(); r++){
+    new_row = [];
     for ( c = 0 ; c < range.getLastColumn(); c++){
       if (
         values[r][c][0] == " "           // if first char of this cell is space
@@ -24,15 +68,19 @@ function prepareForCopy(input_sheet_name) {
       ) {
         values[r][c] = values[r][c].slice(2, values[r][c].length - 2); // slice away the quotes
       }
-     values[r][c] = values[r][c].replace(/\s\s\s+"|"\s\s\s+/g, "");   // /"/g, "\"&CHAR(34)&\""); // remove the quotation mark
+      values[r][c] = values[r][c].toString();  /* EC: read all values as strings to fix the issue when a number is only entered in a cell */
+      values[r][c] = values[r][c].replace(/\s\s\s+"|"\s\s\s+/g, "");   // /"/g, "\"&CHAR(34)&\""); // remove the quotation mark
 
       // I don't know how this works
       // I don't know why this works
       // But it works to make sure that the user can copy the Output into JIRA without quotation marks lingering
       // resource: https://webapps.stackexchange.com/a/104802/185466
-      in_sheet.getRange(r+1,c+1).setFormula("=SUBSTITUTE(SUBSTITUTE(\""+ values[r][c] +"\",CHAR(13)&CHAR(10),CHAR(13)), CHAR(10), CHAR(13))");
+      new_row.push("=SUBSTITUTE(SUBSTITUTE(\""+ values[r][c] +"\",CHAR(13)&CHAR(10),CHAR(13)), CHAR(10), CHAR(13))");
     };
+    out_formulas.push(new_row);
   };
+
+  range.setFormulas(out_formulas);
 }
 
 /**
