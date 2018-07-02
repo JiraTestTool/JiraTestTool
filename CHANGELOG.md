@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2017-12-03
+## [1.1.0] - 2018-07-01
 ### Added
 - added an option to setup the Input/Output/Keywords sheets from an empty spreadsheet
 - added a feature to allow for auto numbering of steps, preconditions, and VPs.
