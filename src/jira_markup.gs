@@ -64,12 +64,6 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
       expect = expect.replace(/"/g,'""');
       notes  = notes.replace(/"/g,'""');
 
-      /* EC: replaces any double back-slashes (\\) with a new line break since JIRA interprets double back-slashes (\\) as a new line break */
-      step   = step.replace(/\\\\/g,"\r\n");
-      desc   = desc.replace(/\\\\/g,"\r\n");
-      expect = expect.replace(/\\\\/g,"\r\n");
-      notes  = notes.replace(/\\\\/g,"\r\n");
-
       desc   = textFormatting(desc, b_list, i_list, u_list);
       expect = textFormatting(expect, b_list, i_list, u_list);
       notes  = textFormatting(notes, b_list, i_list, u_list);
