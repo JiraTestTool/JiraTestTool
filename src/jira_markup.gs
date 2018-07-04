@@ -13,6 +13,24 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
   var values = in_sheet.getDataRange().getValues();
+
+  if (!values[0][0]) {
+    console.error(STEP_MISSING_MESSAGE);
+    return STEP_MISSING;
+  }
+  if (!values[0][1]) {
+    console.error(DESCRIPTION_MISSING_MESSAGE);
+    return DESCRIPTION_MISSING;
+  }
+  if (!values[0][2]) {
+    console.error(EXPECTED_RESULTS_MISSING_MESSAGE);
+    return EXPECTED_RESULTS_MISSING;
+  }
+  if (!values[0][3]) {
+    console.error(NOTES_MISSING_MESSAGE);
+    return NOTES_MISSING;
+  }
+
   var out_sheet = ss.getSheetByName(output_sheet_name);
 
   var result = out_sheet.getDataRange().getValues();

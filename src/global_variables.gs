@@ -1,3 +1,15 @@
+var STEP_MISSING = "STEP_MISSING";
+var STEP_MISSING_MESSAGE = "Please make sure there is a 'Step' column";
+
+var DESCRIPTION_MISSING = "DESCRIPTION_MISSING";
+var DESCRIPTION_MISSING_MESSAGE = "Please make sure there is a 'Description' column";
+
+var EXPECTED_RESULTS_MISSING = "EXPECTED_RESULTS_MISSING";
+var EXPECTED_RESULTS_MISSING_MESSAGE = "Please make sure there is an 'Expected Results' column";
+
+var NOTES_MISSING = "NOTES_MISSING";
+var NOTES_MISSING_MESSAGE = "Please make sure there is a 'Notes' column";
+
 var KEYWORDS_FONTSIZES = [
   [24, 24, 24, 10, 10, 10],
   [10, 10, 10, 10, 10, 10],
