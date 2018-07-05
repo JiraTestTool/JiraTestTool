@@ -1,7 +1,7 @@
 {
   "name": "JiraTestTool_example",
-  "version": "2.0.0",
-  "description": "A minimal Electron application",
+  "version": "2.0.0_alpha",
+  "description": "quickly edit JIRA test cases",
   "main": "main.js",
   "scripts": {
     "postinstall": "install-app-deps",
@@ -9,15 +9,17 @@
     "pack": "build --dir",
     "dist": "build"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/mfekadu/JiraTestTool",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "JIRA",
+    "test",
+    "tool",
+    "create",
+    "edit",
+    "update"
   ],
-  "author": "GitHub",
+  "author": "TGAutomation",
   "license": "CC0-1.0",
   "build": {
     "appId": "yourappid",
