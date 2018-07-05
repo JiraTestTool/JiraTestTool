@@ -27,7 +27,6 @@
     }
   },
   "dependencies": {
-    "electron-builder-squirrel-windows": "^20.15.0",
     "jira-connector": "^2.8.0"
   },
   "devDependencies": {
