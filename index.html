@@ -8,6 +8,8 @@
           border: 1px solid black;
       }
     </style>
+    <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
+    <link href="node_modules/handsontable/dist/handsontable.full.min.css" rel="stylesheet" media="screen">
   </head>
   <body>
     <h1>Hello World!</h1>
@@ -51,38 +53,65 @@
             also imagine this spreadsheet is auto populated with JIRA test steps
         </div>
 
-        <table>
-          <tr>
-            <th>Step</th>
-            <th>Description</th>
-          	<th>Expected</th>
-          	<th>Notes</th>
-          </tr>
+        <br><br>
 
-          <tr>
-            <td>..</td>  <td>..</td>  <td>..</td>  <td>..</td>
-          </tr>
+        <div>
+          <input id="search_field" type="search" placeholder="Search">
+          <br><br>
+          <div id="sheet"></div>
+          <script type="text/javascript">
+            var data = [
+              ["Step", "Description", "Expected", "Notes"],
+              ["Step 1", "do stuff", "expect this", "remember this important thing"],
+              ["Step 2", "do stuff", "expect this", ""],
+              ["Step 3", "do stuff", "expect this", ""],
+              [,,,],
+              [,,,],
+              [,,,],
+              [,,,],
+              [,,,],
+            ];
 
-          <tr>
-            <td>..</td>  <td>..</td>  <td>..</td>  <td>..</td>
-          </tr>
+            var container = document.getElementById('sheet');
+            var searchFiled = document.getElementById('search_field');
+            var hot = new Handsontable(container, {
+              data: data,
+              width: 800,
+              rowHeaders: true,
+              colHeaders: [
+                 'Step',
+                 'Description',
+                 'Expected',
+                 'Notes',
+              ],
+              colWidths: [60, 200, 200, 200],
+              /* true by default */
+              allowInsertRow: true, /* even without contextMenu, can paste to expand spreadsheet */
+              allowRemoveRow: true,
+              /* false by default */
+              search: true,
+              contextMenu: true,
+              mergeCells: true,
+              manualRowResize: true,
+              manualColumnResize: true,
+              wordWrap: true,
+              //manualRowMove: true,
+              //manualColumnMove: true,
+              /* a way to enforce 4 columns Step/Desc/Expect/Notes */
+              allowInsertColumn: false,
+              allowRemoveColumn: false
+            });
 
-          <tr>
-            <td>..</td>  <td>..</td>  <td>..</td>  <td>..</td>
-          </tr>
+            Handsontable.dom.addEvent(searchFiled, 'keyup', function (event) {
+              var search = hot.getPlugin('search');
+              var queryResult = search.query(this.value);
 
-          <tr>
-            <td>..</td>  <td>..</td>  <td>..</td>  <td>..</td>
-          </tr>
+              console.log(queryResult);
+              hot.render();
+            });
 
-          <tr>
-            <td>..</td>  <td>..</td>  <td>..</td>  <td>..</td>
-          </tr>
-
-          <tr>
-            <td>..</td>  <td>..</td>  <td>..</td>  <td>..</td>
-          </tr>
-        </table>
+          </script>
+        </div>
 
         <br><br>
 
