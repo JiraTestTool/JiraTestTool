@@ -22,10 +22,10 @@
   "author": "TGAutomation",
   "license": "CC0-1.0",
   "build": {
-    "appId": "yourappid",
+    "appId": "JTT",
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/2icon.ico"
     }
   },
   "dependencies": {
