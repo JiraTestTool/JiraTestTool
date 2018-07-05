@@ -1,6 +1,6 @@
 {
   "name": "JiraTestTool_example",
-  "version": "2.0.0_alpha",
+  "version": "2.0.0",
   "description": "quickly edit JIRA test cases",
   "main": "main.js",
   "scripts": {
