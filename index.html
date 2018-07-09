@@ -150,6 +150,8 @@
         pass = "";
         jira = undefined;
 
+        theIssueJSON = {};
+
         var JiraClient = require('jira-connector');
 
         function login(idUserInput, idPassInput) {
@@ -159,8 +161,9 @@
           jira = new JiraClient( {
               host: 'jira/jira',
               basic_auth: {
-                  username: user,
-                  password: pass
+                  base64: btoa(user+":"+pass)
+                  //username: user,
+                  //password: pass
               }
           });
         }
@@ -182,6 +185,10 @@
               console.log(error);
               console.log(issue.fields.summary);
               console.log(issue);
+              display.innerHTML = `<pre>${issue.fields.customfield_10403}</pre>`;
+              display.innerHTML += `<br><br>${issue.key} : ${issue.fields.summary}!`;
+              data = convertJiraMarkupToArray(issue.fields.customfield_10403);
+              changeButton();
           });
         }
         //======================================================
@@ -214,6 +221,79 @@
         }
 
         jsonButton.addEventListener('click', generateJson);
+    </script>
+
+
+    <script type="text/javascript">
+      /**
+       * I just realized that this lets you insert undefined via the following:
+       *   someArray.insert(1) // notice the second param is undefined
+       * TODO: make sure this function is safer
+       */
+      Array.prototype.insert = function ( index, item ) {
+          this.splice( index, 0, item );
+      };
+
+      function convertJiraMarkupToArray(stringMarkup) {
+        var first_row = stringMarkup.split(/\r\n|\n/); // just grab the first line
+        var rows = stringMarkup.split(/\|\n|\|\t\n|\|\s+\n/g);
+        /* if there is a mismatch, then the || is missing and needs fixing */
+        if (
+          (first_row[0] != rows[0])
+          && (first_row[0] != rows[0] + "|")
+        ) {
+          rows[0] = rows[0].split(/\r\n|\n/);
+          rows.insert( 1, rows[0][1] );
+          rows[0] = rows[0][0];
+          rows[0] = rows[0] + "||";
+        }
+
+        var finalArray = [];
+        var i = 0;
+        var x = 0;
+        var longest_row_len = 0;
+
+        /* loop over each row from input
+         * and split into finalArray by delimiters
+         * "||" or "|"
+         */
+        rows.forEach(function each(row) {
+          const regex = /\|\||\|/;
+          console.log(row);
+          finalArray[i] = row.split(regex);
+
+          for(x=0; x < finalArray[i].length - 1 ; x++) {
+            if (finalArray[i][x][finalArray[i][x].length - 1] == "\\") {
+              finalArray[i][x] = finalArray[i][x] + finalArray[i][x+1];
+              finalArray[i].remove(x+1);
+            }
+          }
+
+          currLen = finalArray[i].length;
+          longest_row_len = (longest_row_len > currLen) ? longest_row_len : currLen;
+          i++;
+        });
+
+        /* make sure each row in "finalArray" has length = "longest_row_len"
+         * because range.setValues requires the dimensions of "finalArray"
+         * to exactly match the specified dimensions.
+         */
+        var m = 0;
+        var n = 0;
+        finalArray.forEach(function each(row) {
+          currLen = row.length;
+          if (longest_row_len > currLen) {
+            m = longest_row_len - currLen;
+            /* push "" into row 'm' number of times */
+            for(n = 0; n < m; n++){
+              row.push("");
+            }
+          }
+        });
+
+        return finalArray;
+
+      }
     </script>
   </footer>
 </html>

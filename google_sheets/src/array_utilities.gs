@@ -1,5 +1,7 @@
 /**
- *
+ * I just realized that this lets you insert undefined via the following:
+ *   someArray.insert(1) // notice the second param is undefined
+ * TODO: make sure this function is safer
  */
 Array.prototype.insert = function ( index, item ) {
     this.splice( index, 0, item );
