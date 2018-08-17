@@ -13,6 +13,24 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
   var values = in_sheet.getDataRange().getValues();
+
+  if (!values[0][0]) {
+    console.error(STEP_MISSING_MESSAGE);
+    return STEP_MISSING;
+  }
+  if (!values[0][1]) {
+    console.error(DESCRIPTION_MISSING_MESSAGE);
+    return DESCRIPTION_MISSING;
+  }
+  if (!values[0][2]) {
+    console.error(EXPECTED_RESULTS_MISSING_MESSAGE);
+    return EXPECTED_RESULTS_MISSING;
+  }
+  if (!values[0][3]) {
+    console.error(NOTES_MISSING_MESSAGE);
+    return NOTES_MISSING;
+  }
+
   var out_sheet = ss.getSheetByName(output_sheet_name);
 
   var result = out_sheet.getDataRange().getValues();
@@ -75,17 +93,22 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
         step.indexOf("VP") > -1  /* EC: eliminated unneeded or statements due to previous VP replacement code */
       ) {
         vpnum = vpnum + 1; /* EC: increased VP number by 1 */
-        step = (step === "VP") ? step + " " + vpnum : step; /* EC: Test to see if `step` is equal to "VP". If it is, then replace it with VP # else just keep `step` as it is */
+        step = "VP " + vpnum; /* require standard naming of step name for VP */
         out_values.push(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
       }
       else {
         step = step.replace(/pc/i, "Precondition");
         step = step.replace(/precondition/i, "Precondition");
         step = step.replace(/step/i, "Step");
-        if (step === "Step") stnum = stnum + 1; /* EC: If `step` is equal to "Step", increased Step number by 1 */
-        if (step === "Precondition") pcnum = pcnum + 1; /* EC: If `step` is equal to "Precondition", increased Precondition number by 1 */
-        step = (step === "Step") ? step + " " + stnum : step; /* EC: Test to see if `step` is equal to "Step". If it is, then replace it with Step # else just keep `step` as it is */
-        step = (step === "Precondition") ? step + " " + pcnum : step; /* EC: Test to see if `step` is equal to "Precondition". If it is, then replace it with Precondition # else just keep `step` as it is */
+        if (step.indexOf("Step") > -1) {
+          stnum = stnum + 1; /* If `step` contains "Step", increase Step number by 1 */
+          step = "Step " + stnum; /* require standard naming of step name for Step */
+        }
+        else if (step.indexOf("Precondition") > -1) {
+          pcnum = pcnum + 1; /* If `step` contains "Precondition", increase Precondition number by 1 */
+          step = "Precondition " + pcnum; /* require standard naming of step name for Step */
+        }
+        /* else leave it alone? */
         out_values.push(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
       }
     }

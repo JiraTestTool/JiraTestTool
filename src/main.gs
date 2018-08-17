@@ -95,8 +95,25 @@ function showSidebar() {
  *
  */
 function call_jiraMarkup_with_input() {
+  var message = "";
   try {
-    jiraMarkup("Input");
+    var result = jiraMarkup("Input");
+    switch (result) {
+      case STEP_MISSING:
+        message = STEP_MISSING_MESSAGE;
+        break;
+      case DESCRIPTION_MISSING:
+        message = DESCRIPTION_MISSING_MESSAGE;
+        break;
+      case EXPECTED_RESULTS_MISSING:
+        message = EXPECTED_RESULTS_MISSING_MESSAGE;
+        break;
+      case NOTES_MISSING:
+        message = NOTES_MISSING_MESSAGE;
+        break;
+      default:
+        break;
+    }
   }
   catch (e) {
     Logger.log(e);
@@ -113,8 +130,10 @@ function call_jiraMarkup_with_input() {
     }
     message += "\\n\\n>error message: \\n";
     message += ">" + e.name + " - " + e.message;
-    Browser.msgBox(message);
   };
+  if (message != "") {
+    Browser.msgBox(message);
+  }
 };
 
 

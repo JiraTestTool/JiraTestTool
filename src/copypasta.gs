@@ -46,6 +46,7 @@ function copypasta(input_sheet_name) {
   if (
     (first_row[0] != rows[0])
     && (first_row[0] != rows[0] + "|")
+    && (first_row[0] != rows[0] + "| ")
   ) {
     rows[0] = rows[0].split(/\r\n|\n/);
     rows.insert( 1, rows[0][1] );
