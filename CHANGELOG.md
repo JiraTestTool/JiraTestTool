@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - standardized the naming of step name column (i.e. "Step #" or "VP #" or "Precondition #")
 - a prompt is now displayed when columns are missing
 - new official Google Sheets template link: https://jiratesttool.github.io/JiraTestTool/
+- improved instructions on the Google Sheets template for better readability and clarity with picture and GIFs
 
 
 ## [1.1.1] - 2018-07-03
