@@ -14,4 +14,4 @@ Michael Fekadu, Jonathan Devera, Chris Toh, Eric Cole
 
 
 
-[template]: https://docs.google.com/spreadsheets/d/17uKptBeNl5C_dPfdEJjOPs2clcRGPZKoOTagn6w6SRU/edit#gid=1730755105
+[template]: https://jiratesttool.github.io/JiraTestTool/
