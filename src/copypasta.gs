@@ -59,15 +59,27 @@ function copypasta(input_sheet_name) {
   var x = 0;
   var longest_row_len = 0;
 
+
+  const regex = /\|\||\|/;
+  /* special thanks to https://github.com/shaunburdick/jira2slack for the handy linkRegex */
+  const linkRegex = /\[([^[\]|]+?)\|([^[\]|]+?)\]/g;
+  const rand = Math.floor(Math.random() * 9999999);
+  /* there should be no way this replacement practicaly interferes with User data */
+  const replacement = "<JTT_link_pipe_delimiter_replacement_"+rand+">";
+
   /* loop over each row from input
    * and split into cells by delimiters
    * "||" or "|"
    */
   rows.forEach(function each(row) {
-    const regex = /\|\||\|/;
-    cells[i] = row.split(regex);
+    /* replace the pipe delimiter for links temporarily */
+    cells[i] = row.replace(linkRegex, '[$2' + replacement + '$1]');
+
+    /* split into cells via the pipe delimiter */
+    cells[i] = cells[i].split(regex);
 
     for(x=0; x < cells[i].length - 1 ; x++) {
+      cells[i][x].replace(replacement, "|"); /* put the normal link delimiters back */
       if (cells[i][x][cells[i][x].length - 1] == "\\") {
         cells[i][x] = cells[i][x] + cells[i][x+1];
         cells[i].remove(x+1);
