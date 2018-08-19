@@ -1,5 +1,5 @@
 # Jira Test Tool (JTT)
-quickly create or update JIRA tables for test case steps
+create or edit JIRA table markup for test case steps using Google Sheets scripts
 
 JTT can
 * Generate JIRA table markup from a Google Spreadsheet
