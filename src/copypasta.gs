@@ -79,7 +79,8 @@ function copypasta(input_sheet_name) {
     cells[i] = cells[i].split(regex);
 
     for(x=0; x < cells[i].length - 1 ; x++) {
-      cells[i][x] = cells[i][x].replace(replacement, "|"); /* put the normal link delimiters back */
+      /* https://stackoverflow.com/q/1144783/5411712 */
+      cells[i][x] = cells[i][x].replace(new RegExp(replacement, 'g'), "|"); /* put the normal link delimiters back */
       if (cells[i][x][cells[i][x].length - 1] == "\\") {
         cells[i][x] = cells[i][x] + cells[i][x+1];
         cells[i].remove(x+1);
