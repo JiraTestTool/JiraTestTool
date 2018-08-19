@@ -73,7 +73,7 @@ function copypasta(input_sheet_name) {
    */
   rows.forEach(function each(row) {
     /* replace the pipe delimiter for links temporarily */
-    cells[i] = row.replace(linkRegex, '[$2' + replacement + '$1]');
+    cells[i] = row.replace(linkRegex, '[$1' + replacement + '$2]');
 
     /* split into cells via the pipe delimiter */
     cells[i] = cells[i].split(regex);
