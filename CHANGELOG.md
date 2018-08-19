@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2018-08-19
+### Fixed
+- fixed issue where Jira Markup for links misaligned the cells during Import into A1 cell
+
 ## [1.1.2] - 2018-08-17
 ### Fixed
 - improved handling of the pipe ("|") character during Import into A1 cell
@@ -41,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 First version.
 
 [Unreleased]: https://github.com/mfekadu/JiraTestTool/compare/v1.0.0...HEAD
+[1.1.3]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.3
 [1.1.2]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.2
 [1.1.1]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/mfekadu/JiraTestTool/compare/v1.0.0...v1.1.0
