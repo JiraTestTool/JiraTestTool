@@ -63,10 +63,11 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
   for (i = 0; i < rows; i++) {
     if (i != 0) {
       /* EC: read all values as strings to fix the issue when a number is only entered in a cell */
-      step   = values[i][0].toString();
-      desc   = values[i][1].toString();
-      expect = values[i][2].toString();
-      notes  = values[i][3].toString();
+      /* trim gets rid of leading and trailing whitespaces */
+      step   = values[i][0].toString().trim();
+      desc   = values[i][1].toString().trim();
+      expect = values[i][2].toString().trim();
+      notes  = values[i][3].toString().trim();
 
       /* replace all tabs with spaces
        * helps prevent the quotation marks showing up after copying
