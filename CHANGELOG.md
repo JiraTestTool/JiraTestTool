@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.3] - 2018-08-19
 ### Fixed
 - fixed issue where Jira Markup for links misaligned the cells during Import into A1 cell
+- fixed issue where trailing and leading whitespace would increasingly grow around cells when importing Jira markup that JTT previously generated
 
 ## [1.1.2] - 2018-08-17
 ### Fixed
