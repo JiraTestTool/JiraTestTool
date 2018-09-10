@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2018-09-10
+### Added
+- added a copy button that puts the whole output into a popup dialog - [#12]. Thanks [@phelpstylerb]!
+
 ## [1.1.3] - 2018-08-19
 ### Fixed
 - fixed issue where Jira Markup for links misaligned the cells during Import into A1 cell
@@ -43,9 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2018-05-18
 First version.
 
-[Unreleased]: https://github.com/mfekadu/JiraTestTool/compare/v1.0.0...patch-1.1.3
+[Unreleased]: https://github.com/mfekadu/JiraTestTool/compare/v1.0.0...
+[1.1.4]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.4
 [1.1.3]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.3
 [1.1.2]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.2
 [1.1.1]: https://github.com/mfekadu/JiraTestTool/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/mfekadu/JiraTestTool/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/mfekadu/JiraTestTool/releases/tag/v1.0.0
+[#12]: https://github.com/JiraTestTool/JiraTestTool/pull/12
+[@phelpstylerb]: https://github.com/phelpstylerb
