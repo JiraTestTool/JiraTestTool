@@ -1,6 +1,6 @@
 function showRawOutputData() {
   var allValues = SpreadsheetApp.getActiveSheet().getDataRange().getValues();
-  var html = HtmlService.createHtmlOutputFromFile('Page').setWidth(400).setHeight(300);
+  var html = HtmlService.createHtmlOutput().setWidth(400).setHeight(300);
   
   var outputString = "";
   
