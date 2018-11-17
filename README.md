@@ -10,7 +10,7 @@ Requires 3 sheets (Input/Output/Keywords) as in [this Google Sheet template][tem
 A project for Tapestry Solutions in SLO.
 
 Contributors:
-Michael Fekadu, Jonathan Devera, Chris Toh, Eric Cole
+Michael Fekadu, Jonathan Devera, Chris Toh, Eric Cole, Tyler Phelps
 
 
 
