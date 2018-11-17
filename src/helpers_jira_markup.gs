@@ -176,9 +176,7 @@ function textFormatting(text, b_list, i_list, u_list){
     }
   }
 
-  /* the single-quote at the front tells Google Sheets to
-   * parse cell as plain-text rather than formula */
-  return "'" + splitArray.join(" ");
+  return splitArray.join(" ");
 }
 
 
