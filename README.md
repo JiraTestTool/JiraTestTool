@@ -1,10 +1,8 @@
-# electron-quick-start
-
-**Clone and run for a quick way to see Electron in action.**
+# JiraTestTool
 
 This is a minimal Electron application based on the [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the Electron documentation.
 
-**Use this app along with the [Electron API Demos](https://electronjs.org/#get-started) app for API code examples to help you get started.**
+**The [Electron API Demos](https://electronjs.org/#get-started) has API code examples to help you get started.**
 
 A basic Electron application needs just these files:
 
@@ -16,13 +14,13 @@ You can learn more about each of these components within the [Quick Start Guide]
 
 ## To Use
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+To clone and run this repository you'll need [Git](https://git-scm.com) (or just [GitHub for Desktop](https://desktop.github.com/) which is easier on Windows) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
 ```bash
 # Clone this repository
-git clone https://github.com/electron/electron-quick-start
+git clone https://github.com/JiraTestTool/JiraTestTool.git
 # Go into the repository
-cd electron-quick-start
+cd JiraTestTool
 # Install dependencies
 npm install
 # Run the app
