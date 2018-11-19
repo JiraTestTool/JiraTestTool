@@ -64,28 +64,21 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
     if (i != 0) {
       /* EC: read all values as strings to fix the issue when a number is only entered in a cell */
       /* trim gets rid of leading and trailing whitespaces */
-      step   = values[i][0].toString().trim();
-      desc   = values[i][1].toString().trim();
-      expect = values[i][2].toString().trim();
-      notes  = values[i][3].toString().trim();
-
       /* replace all tabs with spaces
        * helps prevent the quotation marks showing up after copying
        */
-      step   = step.replace(/\t/g," ");
-      desc   = desc.replace(/\t/g," ");
-      expect = expect.replace(/\t/g," ");
-      notes  = notes.replace(/\t/g," ");
-
       /* EC: replaces any quotation marks with double-quotation marks so it doesn't break the code */
-      step   = step.replace(/"/g,'""');
-      desc   = desc.replace(/"/g,'""');
-      expect = expect.replace(/"/g,'""');
-      notes  = notes.replace(/"/g,'""');
+      step   = values[i][0].toString().trim().replace(/\t/g," ").replace(/"/g,'""');
+      desc   = values[i][1].toString().trim().replace(/\t/g," ").replace(/"/g,'""');
+      expect = values[i][2].toString().trim().replace(/\t/g," ").replace(/"/g,'""');
+      notes  = values[i][3].toString().trim().replace(/\t/g," ").replace(/"/g,'""');
 
-      desc   = textFormatting(desc, b_list, i_list, u_list);
-      expect = textFormatting(expect, b_list, i_list, u_list);
-      notes  = textFormatting(notes, b_list, i_list, u_list);
+      /* apply markup characters for bold (b_list) italics (i_list) and underline (u_list) words. */
+      /* the single-quote at the front tells Google Sheets to
+       * parse cell as plain-text rather than formula */
+      desc   = "'" + textFormatting(desc, b_list, i_list, u_list);
+      expect = "'" + textFormatting(expect, b_list, i_list, u_list);
+      notes  = "'" + textFormatting(notes, b_list, i_list, u_list);
 
       /* if `step` contains substring "VP" */
       step = step.replace(/vp/i, "VP"); /* EC: replaces any "vp"(case insensitive) with "VP" in any `step` */
@@ -101,6 +94,7 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
         step = step.replace(/pc/i, "Precondition");
         step = step.replace(/precondition/i, "Precondition");
         step = step.replace(/step/i, "Step");
+        step = step.replace(/quote/i, "Quote");
         if (step.indexOf("Step") > -1) {
           stnum = stnum + 1; /* If `step` contains "Step", increase Step number by 1 */
           step = "Step " + stnum; /* require standard naming of step name for Step */
@@ -108,6 +102,13 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
         else if (step.indexOf("Precondition") > -1) {
           pcnum = pcnum + 1; /* If `step` contains "Precondition", increase Precondition number by 1 */
           step = "Precondition " + pcnum; /* require standard naming of step name for Step */
+        }
+        else if (step.indexOf("Quote") > -1) {
+          /* If `step` contains "Quote", then Step number is same as previous */
+          desc = desc.slice(1); /* remove the single-quote at the front because it is not useful when Quote gets inserted into a previous row */
+          desc = "\n" + " {quote}" + desc + "{quote}"; /* surround description with quote tags */
+          out_values[out_values.length-1][3] += desc; /* append description to last row (index 3 of out_values has description)*/
+          continue; /* continue to avoid appending the Quote row to the out_values */
         }
         /* else leave it alone? */
         out_values.push(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
@@ -118,10 +119,10 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
     }
   }
 
-  /* set range of "rows" rows and "9" columns
+  /* set range of "out_values.length" rows and "9" columns
    * with the values inside "out_values"
    */
-  var range = out_sheet.getRange(1,1,rows, 9);
+  var range = out_sheet.getRange(1,1,out_values.length, 9);
   range.setValues(out_values);
 
   sheetFormatting(out_sheet);
