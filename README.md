@@ -14,7 +14,12 @@ You can learn more about each of these components within the [Quick Start Guide]
 
 ## To Use
 
-To clone and run this repository you'll need [Git](https://git-scm.com) (or just [GitHub for Desktop](https://desktop.github.com/) which is easier on Windows) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+To clone and run this repository you'll need 
+- [ ] [Git](https://git-scm.com) (or just [GitHub for Desktop](https://desktop.github.com/) which is easier on Windows) and 
+- [ ] [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. 
+  - it is possible to [install Node without an administrator](https://stackoverflow.com/q/37029089/5411712)
+
+From your command line:
 
 ```bash
 # Clone this repository
