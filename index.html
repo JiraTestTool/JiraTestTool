@@ -31,6 +31,7 @@
     <div class="login">
       username: <input id="userID" type="text" name="username"><br>
       password: <input id="passID" type="password" name="password"><br>
+      <div id="loginStatusContainer"></div>
       <button value="login" onclick="login('userID','passID')">Login</button><br>
     </div>
 
@@ -39,16 +40,12 @@
     <div class="after_login">
 
         <div class="issue">
-          issue: <input type="text" name="issue"><br>
-          <input type="button" value="get test steps"><br>
-          code will talk to JIRA REST API and get test steps from the inputted issue#
+          issue: <input id="issueKey" type="text" name="issue"><br>
+          <div id="issueStatusContainer"></div>
+          <button value="get test steps" onclick="getIssue('issueKey')">get test steps</button><br>
         </div>
+
         <br><br>
-
-        <div>imagine there is a spreadsheet here...<br>
-            also imagine this spreadsheet is auto populated with JIRA test steps
-        </div>
-
         <br><br>
 
         <div>
@@ -60,7 +57,6 @@
               ["Step", "Description", "Expected", "Notes"],
               ["Step 1", "do stuff", "expect this", "remember this important thing"],
               ["Step 2", "do stuff", "expect this", ""],
-              ["Step 3", "do stuff", "expect this", ""],
               [,,,],
               [,,,],
               [,,,],
@@ -70,7 +66,8 @@
 
             var container = document.getElementById('sheet');
             var searchFiled = document.getElementById('search_field');
-            var hot = new Handsontable(container, {
+
+            hotStuff = {
               data: data,
               width: 800,
               rowHeaders: true,
@@ -96,7 +93,9 @@
               /* a way to enforce 4 columns Step/Desc/Expect/Notes */
               allowInsertColumn: false,
               allowRemoveColumn: false
-            });
+            };
+
+            var hot = new Handsontable(container, hotStuff);
 
             Handsontable.dom.addEvent(searchFiled, 'keyup', function (event) {
               var search = hot.getPlugin('search');
@@ -113,33 +112,21 @@
 
         <div class="update">
           <input type="button" value="update issue">
-          <div>now code will talk to JIRA REST API and update the test case</div>
         </div>
 
         <br><br>
 
+        <div>
+          <title>JSON Jenerator</title>
+          <h1>JSON Jenerator:</h1>
+          <main>
+            <div id="displayContainer"></div>
+            <div id="buttonContainer">
+              <button type="button" id="generate">Jenerate!</button>
+            </div>
+          </main>
+        </div>
 
-        <html lang="en" dir="ltr">
-          <head>
-
-            <meta charset="utf-8">
-              <title>JSON Jenerator</title>
-            <link rel="stylesheet" type="text/css" href="public/style.css">
-
-          </head>
-          <body>
-            <h1>JSON Jenerator:</h1>
-            <main>
-              <div id="displayContainer">
-
-              </div>
-              <div id="buttonContainer">
-                <button type="button" id="generate">Jenerate!</button>
-              </div>
-
-            </main>
-          </body>
-        </html>
     </div>
   </body>
   <footer>
@@ -149,21 +136,87 @@
         user = "";
         pass = "";
         jira = undefined;
-
-        theIssueJSON = {};
+        b64 = "";
+        const loginStatus = document.querySelector('#loginStatusContainer');
+        const issueStatus = document.querySelector('#issueStatusContainer');
+        var isLoggedIn = false;
 
         var JiraClient = require('jira-connector');
 
         function login(idUserInput, idPassInput) {
           user = document.getElementById(idUserInput).value;
           pass = document.getElementById(idPassInput).value;
-          console.log("login success");
+          b64 = btoa(user+":"+pass); user="";pass="";
+          console.log("logging in...");
           jira = new JiraClient( {
               host: 'jira/jira',
               basic_auth: {
-                  base64: btoa(user+":"+pass)
-                  //username: user,
-                  //password: pass
+                base64: b64
+              }
+          });
+          loginStatus.innerHTML = `<br>Logging in. Please wait...`;
+          jira.myself.getMyself( {}, function(error, myself, response) {
+            switch (response.statusCode) {
+              case 200: // response.statusMessage: "OK"
+                isLoggedIn = true;
+                console.log(myself);
+                console.log(response);
+                loginStatus.innerHTML = `<br>Hello ${myself.displayName}!`;
+                break;
+              case 401: // response.statusMessage: "Unauthorized"
+                isLoggedIn = false;
+                console.log(error);
+                console.log(response);
+                loginStatus.innerHTML = `<br>Wrong username/password`;
+                break;
+              case 403: // response.statusMessage: "Forbidden"
+                isLoggedIn = false;
+                console.log(error);
+                console.log(response);
+                /* in the future check `response.headers.x-authentication-denied-reason`
+                 * if it has "CAPTCHA_CHALLENGE"
+                 * then use the information inside `response` to redirect to the CAPTCHA via the login-url & JSESSIONID
+                 */
+                loginStatus.innerHTML = `<br>Your account is locked.`
+                    + `<br>Please contact to your administrator to unlock your account and/or do the CAPTCHA on https://${jira.host}`;
+                break;
+              default: // unexpected
+                isLoggedIn = false;
+                loginStatus.innerHTML = `<br>Unexpected response from jira. Please see the console for more information (CTRL+SHIFT+I)`;
+                console.log(error);
+                console.log(myself);
+                console.log(response);
+            }
+          });
+        }
+
+        var arr;
+
+        function getIssue(idIssueKey) {
+          key = document.getElementById(idIssueKey).value;
+          jira.issue.getIssue({
+              issueKey: key
+          }, function(error, issue, response) {
+              switch (response.statusCode) {
+                case 200: // response.statusMessage: "OK"
+                  console.log(issue);
+                  console.log(response);
+                  issueStatus.innerHTML = `<br>Summary: ${issue.fields.summary}`;
+                  /* customfield_10403 is the "Test Case Steps" */
+                  arr = convertJiraMarkupToArray(issue.fields.customfield_10403);
+                  console.log(arr);
+                  hot.loadData(arr);
+                  break;
+                case 404: // response.statusMessage: "Not Found"
+                  console.log(error);
+                  console.log(response);
+                  issueStatus.innerHTML = `<br>Issue Not Found`;
+                  break;
+                default: // unexpected
+                  issueStatus.innerHTML = `<br>Unexpected response from jira. Please see the console for more information (CTRL+SHIFT+I)`;
+                  console.log(error);
+                  console.log(issue);
+                  console.log(response);
               }
           });
         }
@@ -171,7 +224,7 @@
         //======================================================
 
         function getMyself(){
-          jira.myself.getMyself( {}, function(error, myself) {
+          jira.myself.getMyself( {}, function(error, myself, response) {
               console.log(error);
               console.log(myself);
           });
@@ -185,6 +238,7 @@
               console.log(error);
               console.log(issue.fields.summary);
               console.log(issue);
+              /* customfield_10403 is the "Test Case Steps" */
               display.innerHTML = `<pre>${issue.fields.customfield_10403}</pre>`;
               display.innerHTML += `<br><br>${issue.key} : ${issue.fields.summary}!`;
               data = convertJiraMarkupToArray(issue.fields.customfield_10403);
@@ -211,7 +265,7 @@
           }
           xhr.open('GET', 'https://jira/jira/rest/api/latest/myself');
           console.log("attempt authorization with user: " + user);
-          xhr.setRequestHeader("Authorization", "Basic " + btoa(user + ":" + pass));
+          xhr.setRequestHeader("Authorization", "Basic " + b64);
           xhr.send();
         }
 
@@ -233,6 +287,21 @@
       Array.prototype.insert = function ( index, item ) {
           this.splice( index, 0, item );
       };
+
+      /**
+       * var array = [2, 5, 9];
+       * var index = array.indexOf(5);
+       * array.splice(index, 1);
+       * // array = [2, 9]
+       */
+      Array.prototype.remove = function ( index ) {
+        if (index > -1) {
+          this.splice(index, 1);
+          return true;
+        }
+        else { return false; }
+      };
+
 
       function convertJiraMarkupToArray(stringMarkup) {
         var first_row = stringMarkup.split(/\r\n|\n/); // just grab the first line
@@ -267,6 +336,10 @@
               finalArray[i][x] = finalArray[i][x] + finalArray[i][x+1];
               finalArray[i].remove(x+1);
             }
+            if (x == 0) {
+              finalArray[i].remove(0);
+            }
+            finalArray[i][x] = finalArray[i][x].trim();
           }
 
           currLen = finalArray[i].length;
@@ -293,6 +366,12 @@
 
         return finalArray;
 
+      }
+
+      /* make an 'n' by 'n' array and fill it with 'f'; f can be undefined */
+      function makeNbyNArray(n,f) {
+      	if (typeof(n) !== 'number') { console.log("please input a number"); return false; }
+        return Array(n).fill(f).map(()=>Array(n).fill(f));
       }
     </script>
   </footer>
