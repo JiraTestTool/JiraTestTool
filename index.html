@@ -2,30 +2,36 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>JiraTestTool</title>
     <script src="node_modules/handsontable/dist/handsontable.full.min.js"></script>
     <link href="node_modules/handsontable/dist/handsontable.full.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="./style.css">
   </head>
+  <header class="header" id="myHeader">
+    <h1>JiraTestTool</h1>
+  </header>
   <body>
-    <h1>Hello World!</h1>
-    <div>
-       <!-- All of the Node.js APIs are available in this renderer process. -->
-       We are using Node.js <script>document.write(process.versions.node)</script>,
-       Chromium <script>document.write(process.versions.chrome)</script>,
-       and Electron <script>document.write(process.versions.electron)</script>.
-    </div>
 
     <script>
       // You can also require other files to run in this process
       require('./renderer.js')
     </script>
 
-    <div><img src="https://gph.to/2lfKbGD" alt="very nice gif borat"></div>
+    <!-- render process for Menu bar https://electronjs.org/docs/api/menu#render-process -->
+    <script>
+    const {remote} = require('electron')
+    const {Menu, MenuItem} = remote
 
-    <br><br>
-    <br><br>
-    <br><br>
+    const menu = new Menu()
+    menu.append(new MenuItem({label: 'MenuItem1', click() { console.log('item 1 clicked') }}))
+    menu.append(new MenuItem({type: 'separator'}))
+    menu.append(new MenuItem({label: 'MenuItem2', type: 'checkbox', checked: true}))
+
+    window.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+      menu.popup({window: remote.getCurrentWindow()})
+    }, false)
+    </script>
 
 
     <div class="login">
@@ -42,16 +48,22 @@
         <div class="issue">
           issue: <input id="issueKey" type="text" name="issue"><br>
           <div id="issueStatusContainer"></div>
-          <button value="get test steps" onclick="getIssue('issueKey')">get test steps</button><br>
+          <button value="get test steps" onclick="getSteps('issueKey') ; getSteps('issueKey',{preSteps:true})">
+            Get Steps
+          </button>
+          <br>
         </div>
 
-        <br><br>
-        <br><br>
-
         <div>
-          <input id="search_field" type="search" placeholder="Search">
+          <h2>Pre-Test Steps</h1>
+          <input id="pre_step_search_field" type="search" placeholder="Search">
           <br><br>
-          <div id="sheet"></div>
+          <div id="preStepSheet"></div>
+          <br><br>
+          <h2>Test Steps</h1>
+          <input id="step_search_field" type="search" placeholder="Search">
+          <br><br>
+          <div id="stepSheet"></div>
           <script type="text/javascript">
             var data = [
               ["Step", "Description", "Expected", "Notes"],
@@ -64,8 +76,10 @@
               [,,,],
             ];
 
-            var container = document.getElementById('sheet');
-            var searchFiled = document.getElementById('search_field');
+            var preStepSearchField = document.getElementById('pre_step_search_field');
+            var preStepSheet = document.getElementById('preStepSheet');
+            var stepSearchField = document.getElementById('step_search_field');
+            var stepSheet = document.getElementById('stepSheet');
 
             hotStuff = {
               data: data,
@@ -95,14 +109,23 @@
               allowRemoveColumn: false
             };
 
-            var hot = new Handsontable(container, hotStuff);
+            var preStepHot = new Handsontable(preStepSheet, hotStuff);
+            var stepHot = new Handsontable(stepSheet, hotStuff);
 
-            Handsontable.dom.addEvent(searchFiled, 'keyup', function (event) {
-              var search = hot.getPlugin('search');
-              var queryResult = search.query(this.value);
+            Handsontable.dom.addEvent(stepSearchField, 'keyup', function (event) {
+              var search1 = stepHot.getPlugin('search');
+              var queryResult1 = search1.query(this.value);
 
-              console.log(queryResult);
-              hot.render();
+              console.log(queryResult1);
+              stepHot.render();
+            });
+
+            Handsontable.dom.addEvent(preStepSearchField, 'keyup', function (event) {
+              var search2 = preStepHot.getPlugin('search');
+              var queryResult2 = search2.query(this.value);
+
+              console.log(queryResult2);
+              preStepHot.render();
             });
 
           </script>
@@ -111,21 +134,12 @@
         <br><br>
 
         <div class="update">
-          <input type="button" value="update issue">
+          <div id="updateStatusContainer"></div>
+          <input type="button" value="Send Test Steps to JIRA" onclick="editSteps('issueKey')">
+          <input type="button" value="Send Pre-Test Steps to JIRA" onclick="editSteps('issueKey',{preSteps:true})">
         </div>
 
         <br><br>
-
-        <div>
-          <title>JSON Jenerator</title>
-          <h1>JSON Jenerator:</h1>
-          <main>
-            <div id="displayContainer"></div>
-            <div id="buttonContainer">
-              <button type="button" id="generate">Jenerate!</button>
-            </div>
-          </main>
-        </div>
 
     </div>
   </body>
@@ -139,7 +153,9 @@
         b64 = "";
         const loginStatus = document.querySelector('#loginStatusContainer');
         const issueStatus = document.querySelector('#issueStatusContainer');
-        var isLoggedIn = false;
+        const updateStatus = document.querySelector('#updateStatusContainer');
+        var isLoggedIn = false; /* set to true on successful login() and false helps getSteps how to prompt */
+        var gotSteps = false; /* set to true on successful getSteps() and false helps editSteps know to not update on accident */
 
         var JiraClient = require('jira-connector');
 
@@ -190,91 +206,136 @@
           });
         }
 
+        /*
+        * "customfield_10400" seems to be the "Pre-Test Requirements:" field
+        * "customfield_10403" seems to be the "Test Execution Steps and Expected Results:" field
+        * "customfield_10405" seems to be the "Description of Test Case/Suite:" field
+        * "customfield_11360" seems to be the "Parent Name:" field
+        * "customfield_10395" seems to be the "User Type:" field
+        * "assignee" "reporter" are all fields of their own
+        * "customfield_13060" seems to be the "Scripter/s" field
+        * "customfield_14868" seems to be the audit assignee field
+        * "watches" seems to have properties "isWatching" if the current user is watching, along with a link to the watchers and the "watchCount"
+        */
+
         var arr;
 
-        function getIssue(idIssueKey) {
-          key = document.getElementById(idIssueKey).value;
-          jira.issue.getIssue({
-              issueKey: key
-          }, function(error, issue, response) {
-              switch (response.statusCode) {
-                case 200: // response.statusMessage: "OK"
-                  console.log(issue);
-                  console.log(response);
-                  issueStatus.innerHTML = `<br>Summary: ${issue.fields.summary}`;
-                  /* customfield_10403 is the "Test Case Steps" */
-                  arr = convertJiraMarkupToArray(issue.fields.customfield_10403);
-                  console.log(arr);
-                  hot.loadData(arr);
-                  break;
-                case 404: // response.statusMessage: "Not Found"
-                  console.log(error);
-                  console.log(response);
-                  issueStatus.innerHTML = `<br>Issue Not Found`;
-                  break;
-                default: // unexpected
-                  issueStatus.innerHTML = `<br>Unexpected response from jira. Please see the console for more information (CTRL+SHIFT+I)`;
-                  console.log(error);
-                  console.log(issue);
-                  console.log(response);
-              }
-          });
-        }
-
-        //======================================================
-
-        function getMyself(){
-          jira.myself.getMyself( {}, function(error, myself, response) {
-              console.log(error);
-              console.log(myself);
-          });
-        };
-
-
-        function get_gold_25814() {
-          jira.issue.getIssue({
-              issueKey: 'GOLD-25814'
-          }, function(error, issue) {
-              console.log(error);
-              console.log(issue.fields.summary);
-              console.log(issue);
-              /* customfield_10403 is the "Test Case Steps" */
-              display.innerHTML = `<pre>${issue.fields.customfield_10403}</pre>`;
-              display.innerHTML += `<br><br>${issue.key} : ${issue.fields.summary}!`;
-              data = convertJiraMarkupToArray(issue.fields.customfield_10403);
-              changeButton();
-          });
-        }
-        //======================================================
-
-        const jsonButton = document.querySelector('#generate');
-        const buttonContainer = document.querySelector('#buttonContainer');
-        const display = document.querySelector('#displayContainer');
-        const collection = ["Another", "More", "Next", "Continue", "Keep going", "Click me", "A new one"];
-
-        const generateJson = () => {
-          const xhr = new XMLHttpRequest();
-          xhr.responseType = 'json';
-
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              display.innerHTML = `<pre>${JSON.stringify(xhr.response)}</pre>`;
-              display.innerHTML += `<br><br>Hello ${xhr.response.displayName}!`;
-              changeButton();
+        function getSteps(idIssueKey, opts={}) {
+          var key = document.getElementById(idIssueKey).value;
+          var fieldIdStr = 'customfield_10403'; // "customfield_10403" seems to be the "Test Execution Steps and Expected Results:" field
+          var hot = stepHot;
+          if (opts.preSteps) {
+            fieldIdStr = 'customfield_10400'; // "customfield_10400" seems to be the "Pre-Test Requirements:" field
+            hot = preStepHot;
+          }
+          try {
+            if (isLoggedIn) {
+              issueStatus.innerHTML = `<br>Getting issue. Please wait...`;
+              jira.issue.getIssue({
+                  issueKey: key // example PROJECT-25814
+              }, function(error, issue, response) {
+                  switch (response.statusCode) {
+                    case 200: // response.statusMessage: "OK"
+                      console.log(issue); console.log(response);
+                      if (issue.fields && issue.fields.issuetype && issue.fields.issuetype.name.includes('Test Case')) {
+                        issueStatus.innerHTML = `<br>Summary: ${issue.fields.summary}`;
+                        /* customfield_10403 is the "Test Case Steps" */
+                        arr = convertJiraMarkupToArray(issue.fields[fieldIdStr]);
+                        console.log(arr);
+                        hot.loadData(arr);
+                        gotSteps = true;
+                      } else {
+                        gotSteps = false;
+                        issueStatus.innerHTML = `<br>The issue is not a 'Test Case'`;
+                      }
+                      break;
+                    case 404: // response.statusMessage: "Not Found"
+                      gotSteps = false;
+                      console.log(error); console.log(response);
+                      issueStatus.innerHTML = `<br>Issue Not Found`;
+                      break;
+                    default: // unexpected
+                      gotSteps = false;
+                      issueStatus.innerHTML = `<br>Unexpected response from jira. Please see the console for more information (CTRL+SHIFT+I)`;
+                      console.log(error); console.log(issue); console.log(response);
+                  }
+              });
+            } else {
+              issueStatus.innerHTML = `<br>Please login first`;
+            }
+          } catch (e) {
+            gotSteps = false;
+            console.log(e);
+            if (!isLoggedIn) {
+              issueStatus.innerHTML = `<br>Please login first`;
+            } else {
+              issueStatus.innerHTML = `<br>Please enter an issue key above`;
             }
           }
-          xhr.open('GET', 'https://jira/jira/rest/api/latest/myself');
-          console.log("attempt authorization with user: " + user);
-          xhr.setRequestHeader("Authorization", "Basic " + b64);
-          xhr.send();
         }
 
-        const changeButton = () => {
-          const newText = Math.floor(Math.random() * 7);
-          jsonButton.innerHTML = `${collection[newText]}!`;
-        }
+        function editSteps(idIssueKey, opts={}) {
+          if (!isLoggedIn) {
+            updateStatus.innerHTML = `<br>Please login first.`;
+            return false;
+          }
+          var key = document.getElementById(idIssueKey).value;
+          var fieldIdStr = 'customfield_10403'; // "customfield_10403" seems to be the "Test Execution Steps and Expected Results:" field
+          var hot = stepHot;
+          if (opts.preSteps) {
+            fieldIdStr = 'customfield_10400'; // "customfield_10400" seems to be the "Pre-Test Requirements:" field
+            hot = preStepHot;
+          }
+          var issueUpdate = {
+            "fields" : {  }
+          };
+          issueUpdate.fields[fieldIdStr] = convertArrayToJiraMarkup(hot.getData());
 
-        jsonButton.addEventListener('click', generateJson);
+          try {
+            jira.issue.getIssue({issueKey:key}, function(e,i,r) {
+              switch (r.statusCode) {
+                case 200: // response.statusMessage: "OK"
+                  console.log(i); console.log(r);
+                  updateStatus.innerHTML = `<br>Updating. Please wait...`;
+                  jira.issue.editIssue({
+                    issueKey: key,
+                    issue: issueUpdate
+                  }, function(e, i, r) {
+                    switch (r.statusCode) {
+                      case 204: // response.statusMessage: "No Content"
+                      case 200: // response.statusMessage: "OK"
+                        updateStatus.innerHTML = `<br>Done`;
+                        break;
+                      case 400: // response.statusMessage: "Bad Request"
+                        updateStatus.innerHTML = `<br>Error 400 - Bad Request. Please see the console for more information (CTRL+SHIFT+I)`;
+                        console.log(e); console.log(i); console.log(r);
+                        break;
+                      default:
+                        updateStatus.innerHTML = `<br>Unexpected response from jira on editIssue. Please see the console for more information (CTRL+SHIFT+I)`;
+                        console.log(e); console.log(i); console.log(r);
+                    }
+                  });
+                  break;
+                case 404: // response.statusMessage: "Not Found"
+                  console.log(e); console.log(r);
+                  updateStatus.innerHTML = `<br>Issue Not Found`;
+                  break;
+                default: // unexpected
+                  updateStatus.innerHTML = `<br>Unexpected response from jira on getIssue. Please see the console for more information (CTRL+SHIFT+I)`;
+                  console.log(e); console.log(i); console.log(r);
+              }
+          	});
+          } catch(e) {
+            console.log(e);
+            if (!isLoggedIn) {
+              updateStatus.innerHTML = `<br>Please login first.`;
+            } else if (!gotSteps) {
+              updateStatus.innerHTML = `<br>Please get steps from Jira via the 'Get Steps' button.`;
+            } else {
+              updateStatus.innerHTML = `<br>Unexpected problem. Please refresh the page (CTRL+R) and try again.`;
+            }
+          }
+        }
     </script>
 
 
@@ -373,6 +434,91 @@
       	if (typeof(n) !== 'number') { console.log("please input a number"); return false; }
         return Array(n).fill(f).map(()=>Array(n).fill(f));
       }
+
+
+      function convertArrayToJiraMarkup(arr) {
+        if (!arr || !Array.isArray(arr)) {
+          console.error('need input array');
+          return false;
+        }
+        /* declare all local variables */
+        var values = arr;
+        var i;
+        var step;
+        var desc;
+        var expect;
+        var notes;
+        var pcnum = 0; /* EC: Defined the precondition number as "0" */
+        var stnum = 0; /* EC: Defined the step number as "0" */
+        var vpnum = 0; /* EC: Defined the VP number as "0" */
+        var out_values = [];
+
+        for (i = 0; i < arr.length; i++) {
+            /* EC: read all values as strings to fix the issue when a number is only entered in a cell */
+            /* trim gets rid of leading and trailing whitespaces */
+            /* replace all tabs with spaces
+             * helps prevent the quotation marks showing up after copying
+             */
+            /* EC: replaces any quotation marks with double-quotation marks so it doesn't break the code */
+            step   = (values[i][0]) ? values[i][0].trim().replace(/\t/g," ").replace(/"/g,'""') : "";
+            desc   = (values[i][1]) ? values[i][1].trim().replace(/\t/g," ").replace(/"/g,'""') : "";
+            expect = (values[i][2]) ? values[i][2].trim().replace(/\t/g," ").replace(/"/g,'""') : "";
+            notes  = (values[i][3]) ? values[i][3].trim().replace(/\t/g," ").replace(/"/g,'""') : "";
+
+            /* apply markup characters for bold (b_list) italics (i_list) and underline (u_list) words. */
+            /* the single-quote at the front tells Google Sheets to
+             * parse cell as plain-text rather than formula */
+            // desc   = "'" + textFormatting(desc, b_list, i_list, u_list);
+            // expect = "'" + textFormatting(expect, b_list, i_list, u_list);
+            // notes  = "'" + textFormatting(notes, b_list, i_list, u_list);
+
+            /* if `step` contains substring "VP" */
+            step = step.replace(/vp/i, "VP"); /* EC: replaces any "vp"(case insensitive) with "VP" in any `step` */
+
+            if (i == 0) { /* the header row */
+              out_values.push(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
+            }
+            else if (
+              step.indexOf("VP") > -1  /* EC: eliminated unneeded or statements due to previous VP replacement code */
+            ) {
+              vpnum = vpnum + 1; /* EC: increased VP number by 1 */
+              step = "VP " + vpnum; /* require standard naming of step name for VP */
+              out_values.push(["||", step, "||", desc, "||", expect, "||", notes, "||"]);
+            }
+            else {
+              step = step.replace(/pc/i, "Precondition");
+              step = step.replace(/precondition/i, "Precondition");
+              step = step.replace(/step/i, "Step");
+              step = step.replace(/quote/i, "Quote");
+              if (step.indexOf("Step") > -1) {
+                stnum = stnum + 1; /* If `step` contains "Step", increase Step number by 1 */
+                step = "Step " + stnum; /* require standard naming of step name for Step */
+              }
+              else if (step.indexOf("Precondition") > -1) {
+                pcnum = pcnum + 1; /* If `step` contains "Precondition", increase Precondition number by 1 */
+                step = "Precondition " + pcnum; /* require standard naming of step name for Step */
+              }
+              else if (step.indexOf("Quote") > -1) {
+                /* If `step` contains "Quote", then Step number is same as previous */
+                desc = desc.slice(1); /* remove the single-quote at the front because it is not useful when Quote gets inserted into a previous row */
+                desc = "\n" + " {quote}" + desc + "{quote}"; /* surround description with quote tags */
+                out_values[out_values.length-1][3] += desc; /* append description to last row (index 3 of out_values has description)*/
+                continue; /* continue to avoid appending the Quote row to the out_values */
+              }
+              /* else leave it alone? */
+              out_values.push(["|", step, "|", desc, "|", expect, "|", notes, "|"]);
+          }
+        }
+
+        outputString = "";
+        for (i = 0; i < out_values.length; i++) {
+          outputString += out_values[i].join(' ');
+          outputString += '\n';
+        }
+
+        return outputString;
+      }
+
     </script>
   </footer>
 </html>
