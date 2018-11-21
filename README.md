@@ -38,6 +38,9 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 ## Jira Rest API
 * uses [Jira-Connector](https://github.com/floralvikings/jira-connector) which is a JavaScript Jira API Wrapper for NodeJS
 
+## Windows executable
+* https://github.com/JiraTestTool/JiraTestTool/blob/desktopJTT/bin/JiraTestTool_2.0.0_alpha1_setup.exe
+
 ## Resources for Learning Electron
 
 - [electronjs.org/docs](https://electronjs.org/docs) - all of Electron's documentation
