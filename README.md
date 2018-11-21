@@ -13,5 +13,10 @@ Contributors:
 Michael Fekadu, Jonathan Devera, Chris Toh, Eric Cole, Tyler Phelps
 
 
+------------
+There is also a JTT for Desktop app found in the desktopJTT branch
+* https://github.com/JiraTestTool/JiraTestTool/tree/desktopJTT
+
+
 
 [template]: https://jiratesttool.github.io/JiraTestTool/
