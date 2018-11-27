@@ -520,5 +520,43 @@
       }
 
     </script>
+
+    <script type="text/javascript">
+        const docx = require("docx");
+        const filesaver = require('file-saver');
+
+        const { Document, Paragraph, TextRun, Packer } = docx;
+        const { saveAs } = filesaver;
+
+        function generate() {
+            console.log('generating docx');
+            const doc = new Document();
+
+            const paragraph = new Paragraph("Hello World");
+            const institutionText = new TextRun("Foo Bar").bold();
+            const dateText = new TextRun("Github is the best").tab().bold();
+            paragraph.addRun(institutionText);
+            paragraph.addRun(dateText);
+
+            doc.addParagraph(paragraph);
+
+            const packer = new Packer();
+
+            packer.toBlob(doc).then(blob => {
+                console.log(blob);
+                saveAs(blob, "example.docx");
+                console.log("Document created successfully");
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+      function foo() {
+        console.log('foo');
+      }
+    </script>
+
+    <button type="button" onclick="generate()">Generate DOCX</button>
+
   </footer>
 </html>

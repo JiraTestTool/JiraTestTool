@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "docx": "^4.4.0",
+    "file-saver": "^2.0.0",
     "handsontable": "^4.0.0",
     "jira-connector": "^2.8.0"
   },
