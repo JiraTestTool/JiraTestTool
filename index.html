@@ -65,10 +65,20 @@
           <br><br>
           <div id="stepSheet"></div>
           <script type="text/javascript">
-            var data = [
+            var stepHotData = [
               ["Step", "Description", "Expected", "Notes"],
               ["Step 1", "do stuff", "expect this", "remember this important thing"],
               ["Step 2", "do stuff", "expect this", ""],
+              [,,,],
+              [,,,],
+              [,,,],
+              [,,,],
+              [,,,],
+            ];
+            var preStepHotData = [
+              ["Step", "Description", "Expected", "Notes"],
+              ["Precondition 1", "do stuff", "expect this", "remember this important thing"],
+              ["Precondition 2", "do stuff", "expect this", ""],
               [,,,],
               [,,,],
               [,,,],
@@ -81,8 +91,8 @@
             var stepSearchField = document.getElementById('step_search_field');
             var stepSheet = document.getElementById('stepSheet');
 
-            hotStuff = {
-              data: data,
+            stepHotStuff = {
+              data: stepHotData,
               width: 800,
               rowHeaders: true,
               colHeaders: [
@@ -109,8 +119,36 @@
               allowRemoveColumn: false
             };
 
-            var preStepHot = new Handsontable(preStepSheet, hotStuff);
-            var stepHot = new Handsontable(stepSheet, hotStuff);
+            preStepHotStuff = {
+              data: preStepHotData,
+              width: 800,
+              rowHeaders: true,
+              colHeaders: [
+                 'Step',
+                 'Description',
+                 'Expected',
+                 'Notes',
+              ],
+              colWidths: [60, 200, 200, 200],
+              /* true by default */
+              allowInsertRow: true, /* even without contextMenu, can paste to expand spreadsheet */
+              allowRemoveRow: true,
+              /* false by default */
+              search: true,
+              contextMenu: true,
+              mergeCells: true,
+              manualRowResize: true,
+              manualColumnResize: true,
+              wordWrap: true,
+              //manualRowMove: true,
+              //manualColumnMove: true,
+              /* a way to enforce 4 columns Step/Desc/Expect/Notes */
+              allowInsertColumn: false,
+              allowRemoveColumn: false
+            };
+
+            var preStepHot = new Handsontable(preStepSheet, preStepHotStuff);
+            var stepHot = new Handsontable(stepSheet, stepHotStuff);
 
             Handsontable.dom.addEvent(stepSearchField, 'keyup', function (event) {
               var search1 = stepHot.getPlugin('search');
@@ -532,13 +570,31 @@
             console.log('generating docx');
             const doc = new Document();
 
-            const paragraph = new Paragraph("Hello World");
-            const institutionText = new TextRun("Foo Bar").bold();
-            const dateText = new TextRun("Github is the best").tab().bold();
-            paragraph.addRun(institutionText);
-            paragraph.addRun(dateText);
-
+            const paragraph = new Paragraph();
+            var stepHotString = "";
+            var arr = stepHot.getData();
+            for (i = 0; i < arr.length; i++) {
+              stepHotString += arr[i].join(' ');
+              stepHotString += '\n';
+            }
+            const text = new TextRun(stepHotString).tab();
+            paragraph.addRun(text);
             doc.addParagraph(paragraph);
+
+            doc.addParagraph(new Paragraph(""));
+
+            var preStepHotString = "";
+            var arr = preStepHot.getData();
+            for (i = 0; i < arr.length; i++) {
+              preStepHotString += arr[i].join(' ');
+              preStepHotString += '\n';
+            }
+            const p2 = new Paragraph();
+            const t2 = new TextRun(preStepHotString).tab();
+            p2.addRun(t2);
+
+
+            doc.addParagraph(p2);
 
             const packer = new Packer();
 
