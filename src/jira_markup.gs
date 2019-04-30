@@ -13,6 +13,7 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var in_sheet = ss.getSheetByName(input_sheet_name);
   var values = in_sheet.getDataRange().getValues();
+  var preConSteps = values[0][0]; // Used to store Step Name dynamically if user decides to use Precondition Vs Step
 
   if (!values[0][0]) {
     console.error(STEP_MISSING_MESSAGE);
@@ -115,7 +116,7 @@ function jiraMarkup(input_sheet_name, output_sheet_name) {
       }
     }
     else {
-      out_values.push(["||", "Step Name", "||", "Description", "||", "Expected Results", "||", "Notes", "||"]);
+      out_values.push(["||", preConSteps, "||", "Description", "||", "Expected Results", "||", "Notes", "||"]);
     }
   }
 
