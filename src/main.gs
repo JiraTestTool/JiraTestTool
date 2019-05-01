@@ -25,10 +25,10 @@ function createStandaloneMenu() {
       name: 'Import JIRA Markup from Input cell "A1"...',
       functionName: 'call_copypasta_with_input'
     },
-    {
+    /*{ -- Removed due to Quote Mechanism changed from https://jira/jira/browse/TTB-813
       name: 'Apply Quote Tag after first line...',
       functionName: 'call_applyQuoteTagAfterFirstLine'
-    },
+    },*/
     {
       name: 'Generate JIRA Markup...',
       functionName: 'call_jiraMarkup_with_input'
@@ -60,7 +60,8 @@ function createAddonMenu() {
   SpreadsheetApp.getUi().createAddonMenu()
     // Pre-Process
     .addItem('Import JIRA Markup from Input cell "A1"...', 'call_copypasta_with_input')
-    .addItem('Apply Quote Tag after first line...', 'applyQuoteTagAfterFirstLine')
+    //Removed due to Quote Mechanism changed from https://jira/jira/browse/TTB-813
+    //.addItem('Apply Quote Tag after first line...', 'applyQuoteTagAfterFirstLine') 
     // Process
     .addSeparator()
     .addItem('Generate JIRA Markup...', 'call_jiraMarkup_with_input')
