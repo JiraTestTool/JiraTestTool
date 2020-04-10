@@ -9,6 +9,15 @@ Requires 3 sheets (Input/Output/Keywords) as in [this Google Sheet template][tem
 
 A project for Tapestry Solutions in SLO.
 
+The current JIRA Markup Language incorporated in the test step editor tool:
+
+- [x] **Bold**
+- [x] *Italics*
+- [x] __ Underline __
+- [x] "Quotes"
+- [x] Bar Delimiters for tables '|'
+- [x] 2-way compatibility (user can paste a test case into the editor and make it human readable)
+
 Contributors:
 Michael Fekadu, Jonathan Devera, Chris Toh, Eric Cole, Tyler Phelps
 
